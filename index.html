@@ -20,7 +20,7 @@
         *{ font-family: "Noto Sans TC", sans-serif; }
         body{ background-color: var(--bg-color); color: var(--text-main); }
 
-        /* Banner 淺色背景，凸顯綠色 Logo */
+        /* Banner 淺色背景 */
         .banner-header {
             background: linear-gradient(135deg, #F0F4EC 0%, #E2EAD8 100%);
             border: 2px solid #C2D1B7;
@@ -93,7 +93,6 @@
         .status-box { border: 2px dashed #C2D1B7; border-radius: 14px; padding: 24px; text-align: center; color: var(--text-sub); }
         .status-box.error { border-color: #E2A082; background: #FDF4F0; color: #B04A22; }
 
-        /* 校隊固定提示區塊 */
         .fixed-club-card {
             background: #FEF8EC;
             border: 2px solid #E6A13B;
@@ -139,10 +138,14 @@
             </div>
         </div>
 
-        <!-- 步驟 2：選擇學生卡片 -->
+        <!-- 步驟 2：選擇學生卡片 (新增上一步按鈕) -->
         <div id="stepStudent" class="hidden">
-            <div class="text-center mb-4">
-                <h3 id="selectedClassTitle" class="font-black text-center text-base text-slate-700"></h3>
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="backToClassStep()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-3 py-1.5 rounded-lg border border-slate-300 transition flex items-center gap-1">
+                    ⬅️ 上一步 (選班級)
+                </button>
+                <h3 id="selectedClassTitle" class="font-black text-base text-slate-700"></h3>
+                <div class="w-12"></div> <!-- 保持標題對齊 -->
             </div>
             <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
@@ -193,7 +196,6 @@
     </div>
 
     <script>
-        // 帶入您指定的網址：
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwysSOartamBcSLu63YM0ZDVBHF9SU4ZhjA3yCYXK302LTvAtgRLqh4xEiP0yhHcxZxHg/exec";
 
         let allStudents = [];
@@ -209,7 +211,7 @@
             classGrid.innerHTML = '<div class="status-box col-span-2">📡 資料載入中，請稍候…</div>';
 
             try {
-                const res = await fetch(GAS_URL);
+                const res = await fetch(GAS_URL, { redirect: 'follow' });
                 if (!res.ok) throw new Error('伺服器回應錯誤（狀態碼 ' + res.status + '）');
 
                 let data = await res.json();
@@ -225,7 +227,7 @@
                 renderClasses();
             } catch (e) {
                 console.error(e);
-                classGrid.innerHTML = '<div class="status-box error col-span-2">⚠️ 資料載入失敗<br>' + (e.message || '請檢查網路連線') + '<br><button class="mt-2 text-xs bg-red-600 text-white px-3 py-1 rounded" onclick="loadData()">重新載入</button></div>';
+                classGrid.innerHTML = '<div class="status-box error col-span-2">⚠️ 資料載入失敗<br>Failed to fetch (請檢查 GAS 部署權限)<br><button class="mt-2 text-xs bg-red-600 text-white px-3 py-1 rounded" onclick="loadData()">重新載入</button></div>';
             }
         }
 
@@ -271,6 +273,12 @@
             renderStudents(c);
         }
 
+        function backToClassStep() {
+            document.getElementById('stepStudent').classList.add('hidden');
+            document.getElementById('stepClass').classList.remove('hidden');
+            setTrail(1);
+        }
+
         function renderStudents(c) {
             const studentGrid = document.getElementById('studentGrid');
             const students = allStudents.filter(s => s.className === c);
@@ -304,7 +312,6 @@
             document.getElementById('studentInfo').innerText = `${student.className}班 ${student.seatNumber}號 ${student.name}`;
             document.getElementById('levelBadge').innerText = student.level;
 
-            // 判斷是否為「固定/指定校隊」學生
             if (student.fixedClub && student.fixedClub.trim() !== "") {
                 document.getElementById('fixedClubNotice').classList.remove('hidden');
                 document.getElementById('normalClubArea').classList.add('hidden');
@@ -315,7 +322,6 @@
 
                 const studentKey = `${student.className}_${student.seatNumber}`;
                 const pastRecord = existingRecords[studentKey] || {};
-
                 const clubsForLevel = allClubs.filter(c => c.target === student.level);
 
                 currentFilteredClubs = clubsForLevel.map((club, idx) => {
