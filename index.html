@@ -108,14 +108,13 @@
 <body class="py-6 px-4">
     <div class="max-w-xl mx-auto bg-white rounded-3xl shadow-xl p-5 sm:p-7">
         
-        <!-- 頂部 Banner（還原圖像與校名） -->
+        <!-- 頂部 Banner -->
         <div class="banner-header">
-            <div class="flex items-center justify-center gap-2 mb-1">
-                <img id="schoolLogo" src="logo.png" alt="學校Logo" class="h-8 object-contain" onerror="this.outerHTML='<span class=\'text-2xl\'>🌲</span>'">
-                <h1 class="text-xl sm:text-2xl font-black text-[#0f4c28] tracking-wide">福瑞斯特中小學</h1>
-            </div>
-            <p class="text-[11px] font-bold text-[#2d6a4f] tracking-wider mb-2">Forestry Elementary and Junior High School</p>
-            <div class="text-lg sm:text-xl font-black text-[#1b4332]">115學年度 第一學期</div>
+            <!-- 學校 Logo 圖片（圖片內已包含校名與英文） -->
+            <img id="schoolLogo" src="logo.png" alt="福瑞斯特中小學" class="mx-auto h-16 mb-2 object-contain" onerror="this.onerror=null; this.outerHTML='<h1 class=\'text-xl sm:text-2xl font-black text-[#0f4c28] mb-1\'>🌲 福瑞斯特中小學</h1>';">
+            
+            <!-- 學年度與選社標題 -->
+            <div class="text-lg sm:text-xl font-black text-[#1b4332] mt-1">115學年度 第一學期</div>
             <div class="text-xs sm:text-sm font-bold text-[#2d6a4f] mt-0.5">線上選社志願序</div>
 
             <!-- 時間與倒數計時卡片 -->
