@@ -4,84 +4,87 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>福瑞斯特中小學 - 線上選社志願序</title>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-    .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); }
+    body { background-color: #f4f6f0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .card-shadow { box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08); }
+    /* 卡片左側志願彩條 */
+    .border-rank-1 { border-left: 6px solid #f97316 !important; }
+    .border-rank-2 { border-left: 6px solid #15803d !important; }
+    .border-rank-3 { border-left: 6px solid #0284c7 !important; }
+    .border-rank-default { border-left: 6px solid #a8a29e !important; }
   </style>
 </head>
 <body class="p-3 sm:p-6 min-h-screen flex flex-col items-center justify-center">
 
-  <div class="w-full max-w-xl bg-white rounded-3xl p-4 sm:p-7 card-shadow border border-gray-100 my-auto">
+  <div class="w-full max-w-lg bg-white rounded-3xl p-4 sm:p-6 card-shadow border border-gray-100 my-auto">
     
-    <!-- 頁頭資訊區 -->
-    <div class="bg-gradient-to-b from-stone-100 to-emerald-50/40 rounded-2xl p-4 sm:p-5 text-center mb-6 border border-emerald-900/10">
+    <!-- 頂部 Header：還原原本綠底與校徽質感 -->
+    <div class="bg-[#eaf0e6] rounded-2xl p-4 sm:p-5 text-center mb-6 border border-[#d3e0ce]">
       <div class="flex items-center justify-center gap-2 mb-1">
         <span class="text-2xl">🌲</span>
-        <h1 class="text-xl sm:text-2xl font-black text-emerald-900 tracking-wide">福瑞斯特中小學</h1>
+        <h1 class="text-xl sm:text-2xl font-black text-[#0f4c28] tracking-wide">福瑞斯特中小學</h1>
       </div>
-      <p class="text-xs font-semibold text-emerald-700 tracking-wider mb-2">Forestry Elementary and Junior High School</p>
-      <div class="text-lg sm:text-xl font-bold text-gray-800">115學年度 第一學期</div>
-      <div class="text-xs sm:text-sm font-medium text-emerald-800 mt-0.5">線上選社志願序</div>
+      <p class="text-[11px] font-bold text-[#2d6a4f] tracking-wider mb-2">Forestry Elementary and Junior High School</p>
+      <div class="text-lg sm:text-xl font-black text-[#1b4332]">115學年度 第一學期</div>
+      <div class="text-xs sm:text-sm font-bold text-[#2d6a4f] mt-0.5">線上選社志願序</div>
 
-      <!-- 倒數計時器 -->
-      <div id="timer-box" class="mt-3 bg-stone-800 text-white rounded-xl py-2 px-3 shadow-inner">
-        <div id="timer-title" class="text-xs text-amber-300 font-bold mb-0.5">⏰ 載入時間中...</div>
+      <!-- 倒數計時器：還原深灰底金字 -->
+      <div id="timer-box" class="mt-3 bg-[#2b2b2b] text-white rounded-2xl py-2 px-3 shadow-sm">
+        <div id="timer-title" class="text-xs text-[#f59e0b] font-bold mb-0.5">⏰ 報名時間計算中...</div>
         <div id="timer-count" class="text-sm sm:text-base font-mono font-bold tracking-wider">--天 --時 --分 --秒</div>
       </div>
     </div>
 
     <!-- 步驟進度條 -->
-    <div class="flex items-center justify-around mb-6 px-4">
+    <div class="flex items-center justify-around mb-6 px-6">
       <div id="step1-badge" class="flex flex-col items-center">
-        <div class="w-8 h-8 rounded-full bg-emerald-700 text-white font-bold flex items-center justify-center text-sm shadow">1</div>
-        <span class="text-xs font-bold text-emerald-800 mt-1">選班級</span>
+        <div class="w-8 h-8 rounded-full bg-[#2d6a4f] text-white font-bold flex items-center justify-center text-sm shadow">1</div>
+        <span class="text-xs font-bold text-[#1b4332] mt-1">選班級</span>
       </div>
       <div class="h-0.5 w-12 bg-gray-200"></div>
       <div id="step2-badge" class="flex flex-col items-center">
-        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 font-bold flex items-center justify-center text-sm">2</div>
+        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-400 font-bold flex items-center justify-center text-sm">2</div>
         <span class="text-xs font-bold text-gray-400 mt-1">選同學</span>
       </div>
       <div class="h-0.5 w-12 bg-gray-200"></div>
       <div id="step3-badge" class="flex flex-col items-center">
-        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 font-bold flex items-center justify-center text-sm">3</div>
+        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-400 font-bold flex items-center justify-center text-sm">3</div>
         <span class="text-xs font-bold text-gray-400 mt-1">排志願</span>
       </div>
     </div>
 
     <!-- 載入中動畫 -->
-    <div id="loading" class="text-center py-12">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-600 border-t-transparent"></div>
-      <p class="mt-3 text-sm font-bold text-gray-500">資料載入中，請稍候...</p>
+    <div id="loading" class="text-center py-10 border-2 border-dashed border-gray-200 rounded-2xl my-4">
+      <div class="inline-block animate-spin text-xl mb-2">🐚</div>
+      <p class="text-sm font-bold text-gray-500">資料載入中，請稍候⋯</p>
     </div>
 
-    <!-- 主要內容動態區域 -->
+    <!-- 動態內容區 -->
     <div id="content" class="hidden"></div>
 
-    <!-- 頁尾 -->
-    <div class="text-center mt-6 text-xs text-gray-400">
+    <div class="text-center mt-6 text-xs text-gray-400 font-medium">
       製作人：TATA
     </div>
   </div>
 
-  <!-- 彈窗Modal：社團簡介 -->
-  <div id="modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-      <h3 id="modal-title" class="text-lg font-bold text-gray-900 border-b pb-2"></h3>
-      <p id="modal-body" class="text-sm text-gray-600 my-4 leading-relaxed whitespace-pre-line"></p>
-      <button onclick="closeModal()" class="w-full bg-emerald-700 text-white font-bold py-2 rounded-xl hover:bg-emerald-800">關閉</button>
+  <!-- 彈窗Modal：簡介說明 -->
+  <div id="modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative border border-amber-100">
+      <h3 id="modal-title" class="text-base font-bold text-gray-900 border-b pb-2"></h3>
+      <p id="modal-body" class="text-xs text-gray-600 my-4 leading-relaxed whitespace-pre-line max-h-60 overflow-y-auto"></p>
+      <button onclick="closeModal()" class="w-full bg-[#d97706] text-white font-bold py-2.5 rounded-xl hover:bg-[#b45309] transition text-sm">關閉簡介</button>
     </div>
   </div>
 
 <script>
-  // 🌟 請替換為您的 Apps Script Web App URL
+  // 🌟 已嵌入您的 Apps Script Web App 部署網址
   const GAS_URL = "https://script.google.com/macros/s/AKfycbwysSOartamBcSLu63YM0ZDVBHF9SU4ZhjA3yCYXK302LTvAtgRLqh4xEiP0yhHcxZxHg/exec";
 
   let appData = null;
   let selectedClass = "";
   let currentStudent = null;
-  let userPreferences = {}; // 社團名稱 -> 志願序
+  let userPreferences = {}; 
 
   window.onload = async () => {
     try {
@@ -92,11 +95,10 @@
       startTimer();
       renderStep1();
     } catch (err) {
-      alert("資料載入失敗，請檢查網路或系統設定！");
+      alert("資料載入失敗，請確認網路或連結設定！");
     }
   };
 
-  // 1. 倒數計時器
   function startTimer() {
     const update = () => {
       const now = new Date().getTime();
@@ -132,15 +134,15 @@
     document.getElementById('timer-count').innerText = `${d}天 ${h}時 ${m}分 ${s}秒`;
   }
 
-  // 2. Step 1: 選擇班級
+  // Step 1: 選班級
   function renderStep1() {
     updateSteps(1);
     const classes = [...new Set(appData.students.map(s => s.className))].sort();
     
-    let html = `<h2 class="text-base font-bold text-center text-gray-700 mb-4">請選擇班級</h2>`;
-    html += `<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">`;
+    let html = `<h2 class="text-sm font-bold text-center text-gray-700 mb-4">請選擇班級</h2>`;
+    html += `<div class="grid grid-cols-3 gap-3">`;
     classes.forEach(c => {
-      html += `<button onclick="selectClass('${c}')" class="p-3 bg-stone-50 hover:bg-emerald-50 hover:border-emerald-500 border-2 border-stone-200 font-bold text-gray-700 rounded-2xl transition">${c}</button>`;
+      html += `<button onclick="selectClass('${c}')" class="py-3 bg-white hover:bg-stone-50 border border-gray-200 shadow-sm font-black text-gray-800 rounded-2xl transition text-sm">${c}</button>`;
     });
     html += `</div>`;
     document.getElementById('content').innerHTML = html;
@@ -151,20 +153,20 @@
     renderStep2();
   }
 
-  // 3. Step 2: 選擇學生
+  // Step 2: 選同學
   function renderStep2() {
     updateSteps(2);
     const students = appData.students.filter(s => s.className === selectedClass);
 
     let html = `<div class="flex items-center justify-between mb-4">
                   <button onclick="renderStep1()" class="text-xs text-gray-500 hover:underline">← 返回選班級</button>
-                  <h2 class="text-base font-bold text-gray-700">${selectedClass} - 請選擇座號姓名</h2>
+                  <h2 class="text-sm font-bold text-gray-700">${selectedClass} - 請選擇姓名</h2>
                 </div>`;
     html += `<div class="grid grid-cols-2 gap-2.5 max-h-80 overflow-y-auto p-1">`;
     students.forEach(s => {
-      html += `<button onclick="selectStudent('${s.seatNumber}')" class="p-3 bg-white border-2 border-stone-200 hover:border-emerald-600 rounded-2xl text-left transition flex items-center justify-between">
-                <span class="font-bold text-gray-800">${s.seatNumber}號 ${s.name}</span>
-                ${s.fixedClub ? '<span class="text-xs bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold">校隊</span>' : ''}
+      html += `<button onclick="selectStudent('${s.seatNumber}')" class="p-3 bg-white border border-gray-200 hover:border-amber-500 rounded-2xl text-left transition flex items-center justify-between shadow-sm">
+                <span class="font-bold text-gray-800 text-sm">${s.seatNumber}號 ${s.name}</span>
+                ${s.fixedClub ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-1 py-0.5 rounded font-bold">校隊</span>' : ''}
                </button>`;
     });
     html += `</div>`;
@@ -173,30 +175,26 @@
 
   function selectStudent(seat) {
     currentStudent = appData.students.find(s => s.className === selectedClass && s.seatNumber === seat);
-    
-    // 初始化已有志願
     userPreferences = {};
     const key = `${currentStudent.className}_${currentStudent.seatNumber}`;
     if (appData.existingRecords && appData.existingRecords[key]) {
       userPreferences = { ...appData.existingRecords[key] };
     }
-
     renderStep3();
   }
 
-  // 4. Step 3: 排志願 (手機版佈局完全優化，字體不裁切)
+  // Step 3: 排志願 (已防止手機版文字裁切)
   function renderStep3() {
     updateSteps(3);
 
-    // 判斷是否為指定校隊學生
     if (currentStudent.fixedClub) {
       document.getElementById('content').innerHTML = `
         <div class="text-center py-6">
-          <div class="text-4xl mb-3">🏀</div>
-          <h3 class="text-lg font-bold text-gray-800 mb-2">${currentStudent.name} 同學你好！</h3>
-          <p class="text-sm text-gray-600 mb-4">你已被指定為校隊/指定社團：<br><span class="text-emerald-700 font-black text-base">[${currentStudent.fixedClub}]</span></p>
-          <div class="p-3 bg-emerald-50 rounded-xl text-emerald-800 text-xs font-bold border border-emerald-200">
-            不用再手動排志願囉！系統已自動為你完成登記。
+          <div class="text-3xl mb-2">🏀</div>
+          <h3 class="text-base font-bold text-gray-800 mb-1">${currentStudent.name} 同學你好！</h3>
+          <p class="text-xs text-gray-600 mb-4">你已具備指定校隊身份：<br><span class="text-amber-700 font-black text-sm">[${currentStudent.fixedClub}]</span></p>
+          <div class="p-3 bg-amber-50 rounded-xl text-amber-800 text-xs font-bold border border-amber-200">
+            系統已自動幫你完成登記，無須額外填寫志願。
           </div>
           <button onclick="renderStep1()" class="mt-6 text-xs text-gray-500 hover:underline">← 返回首頁</button>
         </div>
@@ -204,46 +202,53 @@
       return;
     }
 
-    // 可選社團過濾
     const availableClubs = appData.clubs.filter(c => c.target.includes(currentStudent.level) || c.target.includes("全"));
 
     let html = `
       <div class="flex items-center justify-between mb-3">
-        <button onclick="renderStep2()" class="text-xs text-gray-500 hover:underline">← 重選學生</button>
-        <span class="text-sm font-bold text-emerald-800">${currentStudent.className} ${currentStudent.name}</span>
+        <button onclick="renderStep2()" class="text-xs text-gray-500 hover:underline">← 重選同學</button>
+        <span class="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-1 rounded-lg border border-amber-200">${currentStudent.className} ${currentStudent.name}</span>
       </div>
-      <p class="text-xs text-gray-500 text-center mb-4">ℹ️ 請為下方社團選擇志願順序（不可重複）</p>
+      <p class="text-[11px] text-gray-400 text-center mb-3">ℹ️ 可點選右側「簡介」查看說明</p>
       
-      <div class="space-y-3 max-h-[50vh] overflow-y-auto pr-1">
+      <div class="space-y-2.5 max-h-[50vh] overflow-y-auto pr-1">
     `;
 
     availableClubs.forEach(club => {
       const currentRank = userPreferences[club.name] || "";
+      let borderClass = "border-rank-default";
+      if (currentRank == 1) borderClass = "border-rank-1";
+      else if (currentRank == 2) borderClass = "border-rank-2";
+      else if (currentRank == 3) borderClass = "border-rank-3";
 
       html += `
-        <div class="bg-stone-50/80 rounded-2xl p-3 sm:p-4 border border-stone-200/80 shadow-sm">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <div class="bg-white rounded-2xl p-3 border border-gray-100 shadow-sm ${borderClass}">
+          <div class="flex items-center justify-between gap-2">
             
-            <!-- 上半部：志願下拉選單 + 社團名稱 -->
-            <div class="flex items-center gap-2.5 flex-1 min-w-0">
+            <!-- 志願選擇區 -->
+            <div class="shrink-0">
               <select onchange="updateRank('${club.name}', this.value)" 
-                      class="bg-amber-500 text-white text-xs sm:text-sm font-bold rounded-xl px-2.5 py-1.5 focus:ring-amber-600 focus:border-amber-600 shrink-0">
-                <option value="">未選擇</option>
+                      class="bg-amber-50 border-2 border-amber-500 text-amber-900 text-xs font-bold rounded-xl px-2 py-1.5 focus:outline-none">
+                <option value="">選擇志願</option>
                 ${[1,2,3,4,5,6,7,8,9,10].map(r => `<option value="${r}" ${currentRank == r ? 'selected' : ''}>第 ${r} 志願</option>`).join('')}
               </select>
+            </div>
 
-              <div class="min-w-0 flex-1">
-                <div class="font-bold text-gray-800 text-sm sm:text-base leading-snug break-words">
-                  [${club.id}] ${club.name}
-                </div>
-                <div class="text-xs text-gray-400 truncate">指導老師：${club.teacher || '校外老師'}</div>
+            <!-- 社團名稱（破字自動換行防裁切） -->
+            <div class="min-w-0 flex-1 px-1">
+              <div class="font-bold text-gray-800 text-xs sm:text-sm leading-tight break-words">
+                [${club.id}] ${club.name}
+              </div>
+              <div class="text-[10px] text-gray-400 truncate mt-0.5">
+                指導老師：${club.teacher || '待定'}
               </div>
             </div>
 
-            <!-- 下半部 (手機)：簡介按鈕 -->
-            <div class="flex items-center justify-end shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-gray-200/50">
-              <button onclick="showClubModal('${club.id}')" class="bg-amber-500/90 hover:bg-amber-600 text-white font-bold text-xs py-1 px-3 rounded-lg shadow-sm flex items-center gap-1">
-                ℹ️ 簡介
+            <!-- 簡介按鈕 -->
+            <div class="shrink-0">
+              <button onclick="showClubModal('${club.id}')" 
+                      class="bg-[#d97706] hover:bg-[#b45309] text-white font-bold text-[11px] py-1 px-2.5 rounded-lg shadow-sm flex items-center gap-0.5">
+                <span>ℹ️</span><span>簡介</span>
               </button>
             </div>
 
@@ -254,8 +259,8 @@
 
     html += `
       </div>
-      <button onclick="submitPreferences()" class="w-full mt-5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 rounded-2xl shadow-lg transition text-sm">
-        🚀 確認並提交志願
+      <button onclick="submitPreferences()" class="w-full mt-4 bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-bold py-3 rounded-2xl shadow-md transition text-xs tracking-wider">
+        🚀 送出志願序結果
       </button>
     `;
 
@@ -266,19 +271,18 @@
     if (rank === "") {
       delete userPreferences[clubName];
     } else {
-      // 檢查是否重複
       for (let k in userPreferences) {
         if (userPreferences[k] == rank && k !== clubName) {
-          alert(`「第 ${rank} 志願」已經設定給 ${k} 囉！請勿重複選擇。`);
+          alert(`「第 ${rank} 志願」已選擇過囉！請勿重複選擇。`);
           renderStep3();
           return;
         }
       }
       userPreferences[clubName] = rank;
     }
+    renderStep3();
   }
 
-  // 5. 提交資料
   async function submitPreferences() {
     const preferencesArray = Object.keys(userPreferences).map(k => ({
       clubName: k,
@@ -324,7 +328,6 @@
     }
   }
 
-  // 6. UI 步驟切換
   function updateSteps(step) {
     [1, 2, 3].forEach(s => {
       const b = document.getElementById(`step${s}-badge`);
@@ -332,16 +335,15 @@
       const text = b.children[1];
 
       if (s <= step) {
-        circle.className = "w-8 h-8 rounded-full bg-emerald-700 text-white font-bold flex items-center justify-center text-sm shadow";
-        text.className = "text-xs font-bold text-emerald-800 mt-1";
+        circle.className = "w-8 h-8 rounded-full bg-[#2d6a4f] text-white font-bold flex items-center justify-center text-sm shadow";
+        text.className = "text-xs font-bold text-[#1b4332] mt-1";
       } else {
-        circle.className = "w-8 h-8 rounded-full bg-gray-200 text-gray-500 font-bold flex items-center justify-center text-sm";
+        circle.className = "w-8 h-8 rounded-full bg-gray-200 text-gray-400 font-bold flex items-center justify-center text-sm";
         text.className = "text-xs font-bold text-gray-400 mt-1";
       }
     });
   }
 
-  // 7. Modal 彈窗控制
   function showClubModal(clubId) {
     const club = appData.clubs.find(c => c.id === clubId);
     if (!club) return;
