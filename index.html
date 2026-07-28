@@ -30,10 +30,8 @@
 
         <!-- 步驟 2：選擇學生卡片 -->
         <div id="stepStudent" class="hidden">
-            <div class="flex justify-between items-center mb-4">
-                <button onclick="goBackToClass()" class="text-sm text-blue-600 underline">← 重選班級</button>
+            <div class="text-center mb-4">
                 <h3 id="selectedClassTitle" class="text-base font-semibold text-slate-700"></h3>
-                <div></div>
             </div>
             <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
@@ -43,7 +41,8 @@
             <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
                 <div class="flex justify-between items-center mb-1">
                     <span id="studentInfo" class="font-bold text-blue-900 text-lg"></span>
-                    <button onclick="goBackToStudent()" class="text-xs text-blue-600 underline">切換學生</button>
+                    <!-- 僅保留「重新選擇」，避免隨意切換 -->
+                    <button onclick="restartProcess()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded transition">重新選擇</button>
                 </div>
                 <span id="levelBadge" class="inline-block bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded-full font-semibold"></span>
             </div>
@@ -144,15 +143,12 @@
             document.getElementById('studentInfo').innerText = `${student.className}班 ${student.seatNumber}號 ${student.name}`;
             document.getElementById('levelBadge').innerText = student.level;
 
-            // 檢查該生先前是否有填過紀錄
             const studentKey = `${student.className}_${student.seatNumber}`;
             const pastRecord = existingRecords[studentKey] || {};
 
-            // 篩選出該學制社團
             const clubsForLevel = allClubs.filter(c => c.target === student.level);
 
             currentFilteredClubs = clubsForLevel.map((club, idx) => {
-                // 如果先前有紀錄就帶入，否則預設 1, 2, 3...
                 const savedRank = pastRecord[club.name] ? parseInt(pastRecord[club.name]) : (idx + 1);
                 return {
                     ...club,
@@ -226,20 +222,17 @@
             document.getElementById('descModal').classList.add('hidden');
         }
 
-        function goBackToClass() {
+        // 重新回到選班級的第一頁
+        function restartProcess() {
+            document.getElementById('stepClub').classList.add('hidden');
             document.getElementById('stepStudent').classList.add('hidden');
             document.getElementById('stepClass').classList.remove('hidden');
-        }
-
-        function goBackToStudent() {
-            document.getElementById('stepClub').classList.add('hidden');
-            document.getElementById('stepStudent').classList.remove('hidden');
+            currentStudent = null;
         }
 
         async function submitData() {
             if (!currentStudent) return;
 
-            // 打包成 [{clubName: '直排輪', rank: 1}, ...]
             const preferencesPayload = currentFilteredClubs.map(c => ({
                 clubName: c.name,
                 rank: c.rank
@@ -260,9 +253,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                alert('志願提交/更新成功！已覆蓋更新至 Excel 試算表。');
+                alert('志願提交/更新成功！已寫入資料庫。');
                 
-                // 本地更新紀錄，方便不刷新即可再次點選
                 const studentKey = `${currentStudent.className}_${currentStudent.seatNumber}`;
                 if (!existingRecords[studentKey]) existingRecords[studentKey] = {};
                 currentFilteredClubs.forEach(c => {
