@@ -6,236 +6,206 @@
     <title>115學年度 第一學期 線上選社志願序</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Iansui&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root{
-            --pine:#2E4A3D;
-            --pine-dark:#1F352B;
-            --moss:#6B8F5A;
-            --moss-light:#E4EEDB;
-            --amber:#E7A33E;
-            --amber-dark:#C97F1F;
-            --bark:#8A6240;
-            --bark-dark:#6B4A2E;
-            --paper:#F3ECDD;
-            --card:#FFFDF8;
-            --ink:#24312A;
-            --ink-soft:#6B7A6C;
-            --line:#E4D9C2;
+            --olive:#5F7A4C;
+            --olive-dark:#4B6339;
+            --sage-bg:#E9EFE1;
+            --cream:#FBF7EC;
+            --tan-line:#E4D9C0;
+            --ink:#2B2B28;
+            --ink-soft:#8A8A83;
+            --amber:#D98E2B;
         }
         *{ font-family:"Noto Sans TC", sans-serif; }
-        .font-display{ font-family:"Iansui","Noto Sans TC",sans-serif; letter-spacing:.02em; }
+        body{ background: var(--sage-bg); color: var(--ink); }
 
-        body{
-            background-color: var(--paper);
-            background-image:
-                radial-gradient(circle at 8% 10%, rgba(107,143,90,.16), transparent 40%),
-                radial-gradient(circle at 95% 18%, rgba(231,163,62,.14), transparent 38%),
-                radial-gradient(circle at 15% 92%, rgba(138,98,64,.12), transparent 42%);
-            background-attachment: fixed;
-            color: var(--ink);
+        header.top-bar{
+            background:#fff;
+            border-bottom:1px solid #E4E4DC;
+            padding: 14px 16px;
+            text-align:center;
         }
+        header.top-bar h1{ font-size:15px; font-weight:900; color:var(--ink); }
 
-        .site-card{
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: 26px;
-            box-shadow: 0 18px 40px -20px rgba(46,74,61,.35);
-            position: relative;
-            overflow: hidden;
-        }
-        .site-card::before{
-            content:"";
-            position:absolute; top:0; left:0; right:0; height:6px;
-            background: linear-gradient(90deg, var(--moss), var(--amber), var(--pine));
+        .page-card{
+            background: var(--sage-bg);
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 18px 16px 40px;
         }
 
-        /* header */
-        .header-board{
-            background: linear-gradient(160deg, var(--bark), var(--bark-dark));
-            border-radius: 20px;
-            padding: 22px 20px 20px;
-            position: relative;
-            box-shadow: inset 0 2px 6px rgba(255,255,255,.15), inset 0 -6px 14px rgba(0,0,0,.25);
-        }
-        .header-board h1, .header-board h2{ color:#FBF3E1; }
-        .header-board .sub{ color:#E7D8BC; }
-        .leaf-badge{
-            position:absolute; width:34px; height:34px;
-        }
-        .leaf-badge svg{ width:100%; height:100%; }
+        .logo-block{ text-align:center; margin: 10px 0 14px; }
+        .logo-block h2{ font-size:19px; font-weight:900; color:var(--ink); }
+        .logo-block h3{ font-size:15px; font-weight:700; color:var(--ink-soft); margin-top:2px; }
 
-        /* trail step indicator */
-        .trail{ display:flex; align-items:center; justify-content:center; gap:6px; margin: 22px 0 26px; }
-        .trail-step{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+        /* trail */
+        .trail{ display:flex; align-items:center; justify-content:center; gap:6px; margin: 14px 0 20px; }
+        .trail-step{ display:flex; flex-direction:column; align-items:center; gap:5px; }
         .trail-dot{
-            width:38px; height:38px; border-radius:50%;
+            width:34px; height:34px; border-radius:50%;
             display:flex; align-items:center; justify-content:center;
-            font-size:16px; border:2px solid var(--line); background:#fff;
+            font-size:14px; border:2px solid #DCE3D3; background:#fff;
             color: var(--ink-soft); font-weight:700; transition:.2s ease;
         }
-        .trail-dot.active{ background: var(--pine); border-color: var(--pine); color:#fff; box-shadow:0 6px 14px -6px rgba(46,74,61,.6); }
-        .trail-dot.done{ background: var(--moss); border-color: var(--moss); color:#fff; }
-        .trail-label{ font-size:11.5px; color:var(--ink-soft); font-weight:700; }
-        .trail-label.active{ color:var(--pine); }
-        .trail-line{ width:34px; height:2px; background:var(--line); border-radius:2px; margin-bottom:22px; }
-        .trail-line.done{ background: var(--moss); }
+        .trail-dot.active{ background: var(--olive); border-color: var(--olive); color:#fff; }
+        .trail-dot.done{ background:#A9BF97; border-color:#A9BF97; color:#fff; }
+        .trail-label{ font-size:11px; color:var(--ink-soft); font-weight:700; }
+        .trail-label.active{ color:var(--olive); }
+        .trail-line{ width:28px; height:2px; background:#DCE3D3; border-radius:2px; margin-bottom:19px; }
+        .trail-line.done{ background:#A9BF97; }
 
-        h3.section-title{
-            font-weight:900; color:var(--pine); text-align:center;
-        }
+        h3.section-title{ font-weight:900; color:var(--ink); text-align:center; font-size:15px; }
 
-        /* class signpost buttons */
+        /* class buttons */
         .class-btn{
-            background: linear-gradient(160deg, var(--pine), var(--pine-dark));
-            color: #FBF3E1;
-            border-radius: 18px;
-            padding: 20px 10px;
-            font-size: 1.4rem;
-            font-weight: 900;
-            box-shadow: 0 10px 22px -12px rgba(31,53,43,.55), inset 0 1px 0 rgba(255,255,255,.15);
-            display:flex; align-items:center; justify-content:center; gap:8px;
+            background: var(--olive);
+            color:#fff;
+            border-radius: 16px;
+            padding: 26px 10px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            box-shadow: 0 4px 10px -4px rgba(0,0,0,.15);
+            border:none;
             transition:.15s ease;
-            border: none;
         }
-        .class-btn:hover{ transform: translateY(-2px); box-shadow: 0 14px 26px -12px rgba(31,53,43,.6); }
+        .class-btn:hover{ background: var(--olive-dark); }
         .class-btn:active{ transform: scale(.97); }
-        .class-btn::before{ content:"🌲"; font-size:1.1rem; }
 
-        /* student name-tag cards */
+        /* student cards */
         .student-card{
-            background: var(--card);
-            border: 2px dashed var(--line);
-            border-radius: 18px;
-            padding: 18px 12px 16px;
+            background: var(--cream);
+            border: 1.5px solid var(--tan-line);
+            border-radius: 16px;
+            padding: 20px 10px 18px;
             text-align:center;
             cursor:pointer;
-            position: relative;
             transition:.15s ease;
         }
-        .student-card:hover{ border-color: var(--amber); background: #FFFBF2; }
+        .student-card:hover{ border-color: var(--olive); }
         .student-card:active{ transform: scale(.97); }
-        .student-card::before{
-            content:""; position:absolute; top:8px; left:50%; transform:translateX(-50%);
-            width:10px; height:10px; border-radius:50%; background: var(--paper); border:1px solid var(--line);
-        }
-        .seat-badge{
-            display:inline-flex; align-items:center; justify-content:center;
-            width:30px; height:30px; border-radius:50%;
-            background: var(--moss-light); color: var(--moss); font-weight:900; font-size:12.5px;
-            margin-bottom:6px;
-        }
-        .student-name{ color: var(--pine); font-weight:900; font-size:1.4rem; }
+        .seat-label{ color: var(--ink-soft); font-size: 15px; font-weight:500; margin-bottom:6px; }
+        .student-name{ color: var(--ink); font-weight:800; font-size:1.5rem; }
 
         /* club selection panel */
         .info-banner{
-            background: var(--moss-light);
-            border: 1px solid #CEDFC0;
-            border-radius: 16px;
+            background:#fff;
+            border: 1px solid #E4E4DC;
+            border-radius: 14px;
             padding: 14px 16px;
         }
         .level-badge{
-            display:inline-block; background: var(--amber); color:#fff;
+            display:inline-block; background: var(--olive); color:#fff;
             font-weight:800; font-size:11.5px; padding:3px 10px; border-radius:999px;
         }
         .btn-ghost{
-            background:#fff; border:1px solid var(--line); color: var(--ink-soft);
+            background:#fff; border:1px solid #DADAD0; color: var(--ink-soft);
             font-size:12px; font-weight:700; padding:6px 10px; border-radius:10px;
         }
-        .btn-ghost:hover{ background: var(--paper); }
+        .btn-ghost:hover{ background: var(--sage-bg); }
 
         .club-row{
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-left: 5px solid var(--line);
+            background: #fff;
+            border: 1px solid #E4E4DC;
+            border-left: 5px solid #E4E4DC;
             border-radius: 14px;
             padding: 10px 12px;
             display:flex; align-items:center; justify-content:space-between; gap:10px;
         }
-        .club-row.rank-1{ border-left-color: var(--amber); background: linear-gradient(90deg, #FFF7E8, var(--card) 30%); }
-        .club-row.rank-2{ border-left-color: var(--moss); }
-        .club-row.rank-3{ border-left-color: #A9C9EB; }
+        .club-row.rank-1{ border-left-color: var(--amber); }
+        .club-row.rank-2{ border-left-color: var(--olive); }
+        .club-row.rank-3{ border-left-color: #8AA9C9; }
 
         .rank-select{
-            background:#fff; border:1.5px solid var(--amber); color: var(--amber-dark);
+            background:#fff; border:1.5px solid var(--amber); color: #A8631C;
             font-weight:800; font-size:13px; border-radius:10px; padding:8px 8px;
         }
         .rank-select:focus{ outline:2px solid var(--amber); outline-offset:1px; }
 
-        .club-name{ color: var(--pine); font-weight:800; }
+        .club-name{ color: var(--ink); font-weight:800; }
         .club-desc{ color: var(--ink-soft); }
 
         .info-chip{
             background: var(--amber); color:#fff; font-weight:700; font-size:11.5px;
             padding: 6px 10px; border-radius:10px; white-space:nowrap;
         }
-        .info-chip:hover{ background: var(--amber-dark); }
+        .info-chip:hover{ background:#A8631C; }
 
         .btn-submit{
-            background: linear-gradient(160deg, var(--moss), var(--pine));
-            color:#fff; font-weight:900; font-size:1.1rem;
-            padding: 15px; border-radius:18px;
-            box-shadow: 0 14px 26px -14px rgba(46,74,61,.6);
+            background: var(--olive);
+            color:#fff; font-weight:900; font-size:1.05rem;
+            padding: 15px; border-radius:16px;
         }
+        .btn-submit:hover{ background: var(--olive-dark); }
         .btn-submit:active{ transform: scale(.98); }
 
         /* modal */
         #descModal .modal-card{
-            background: var(--card); border-radius: 22px; border:1px solid var(--line);
-            position:relative; overflow:hidden;
+            background: #fff; border-radius: 18px; border:1px solid #E4E4DC;
         }
-        #descModal .modal-card::before{
-            content:""; position:absolute; top:0; left:0; right:0; height:6px;
-            background: linear-gradient(90deg, var(--amber), var(--moss));
+        #modalTitle{ color: var(--ink); }
+        .btn-close{ background: var(--olive); color:#fff; font-weight:800; }
+        .btn-close:hover{ background: var(--olive-dark); }
+
+        /* status / error states */
+        .status-box{
+            border: 1.5px dashed #DADAD0; border-radius:14px; padding: 26px 16px;
+            text-align:center; color: var(--ink-soft); font-size:13.5px;
         }
-        #modalTitle{ color: var(--pine); }
-        .btn-close{
-            background: var(--pine); color:#fff; font-weight:800;
+        .status-box.error{ border-color:#E3B7A1; background:#FCF1EA; color:#9C4A24; }
+        .status-box .retry-btn{
+            margin-top:12px; background: var(--olive); color:#fff; font-weight:700;
+            font-size:13px; padding:8px 16px; border-radius:10px; display:inline-block;
         }
-        .btn-close:hover{ background: var(--pine-dark); }
+
+        footer.credit{ text-align:center; color: var(--ink-soft); font-size:11.5px; margin-top:26px; }
 
         @media (prefers-reduced-motion: reduce){ .class-btn, .student-card{ transition:none; } }
     </style>
 </head>
-<body class="min-h-screen py-6 px-4">
-    <div class="max-w-2xl mx-auto site-card p-6">
+<body>
+    <header class="top-bar">
+        <h1>國小社團選填系統</h1>
+    </header>
 
-        <!-- 頂部 Logo 與標頭區 -->
-        <div class="header-board text-center mb-2">
-            <img id="schoolLogo" src="logo.png" alt="學校Logo" class="mx-auto h-16 mb-2 object-contain">
-            <h1 class="font-display text-xl sm:text-2xl font-bold">115學年度 第一學期</h1>
-            <h2 class="font-display text-lg font-semibold mt-1">線上選社志願序</h2>
-            <p class="sub text-xs mt-1">選班級 → 選同學 → 排志願，三步驟完成登記</p>
+    <div class="page-card">
+        <div class="logo-block">
+            <img id="schoolLogo" src="logo.png" alt="學校Logo" class="mx-auto h-14 mb-2 object-contain" onerror="this.style.display='none'">
+            <h2>115學年度 第一學期</h2>
+            <h3>線上選社志願序</h3>
         </div>
 
         <!-- 步驟軌跡 -->
         <div class="trail" id="trail">
             <div class="trail-step">
-                <div class="trail-dot active" id="dotClass">🪧</div>
+                <div class="trail-dot active" id="dotClass">1</div>
                 <span class="trail-label active" id="labelClass">選班級</span>
             </div>
             <div class="trail-line" id="lineOne"></div>
             <div class="trail-step">
-                <div class="trail-dot" id="dotStudent">🧒</div>
+                <div class="trail-dot" id="dotStudent">2</div>
                 <span class="trail-label" id="labelStudent">選同學</span>
             </div>
             <div class="trail-line" id="lineTwo"></div>
             <div class="trail-step">
-                <div class="trail-dot" id="dotClub">🍃</div>
+                <div class="trail-dot" id="dotClub">3</div>
                 <span class="trail-label" id="labelClub">排志願</span>
             </div>
         </div>
 
         <!-- 步驟 1：選擇班級 -->
         <div id="stepClass">
-            <h3 class="section-title text-base mb-4">請選擇班級</h3>
-            <div id="classGrid" class="grid grid-cols-2 gap-4"></div>
+            <h3 class="section-title mb-4">請選擇班級</h3>
+            <div id="classGrid" class="grid grid-cols-2 gap-4">
+                <div class="status-box col-span-2">📡 資料載入中，請稍候…</div>
+            </div>
         </div>
 
         <!-- 步驟 2：選擇學生卡片 -->
         <div id="stepStudent" class="hidden">
             <div class="text-center mb-4">
-                <h3 id="selectedClassTitle" class="section-title text-base"></h3>
+                <h3 id="selectedClassTitle" class="section-title"></h3>
             </div>
             <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
@@ -244,7 +214,7 @@
         <div id="stepClub" class="hidden">
             <div class="info-banner mb-4">
                 <div class="flex justify-between items-center mb-1">
-                    <span id="studentInfo" class="font-bold text-lg" style="color:var(--pine)"></span>
+                    <span id="studentInfo" class="font-bold text-lg"></span>
                     <button onclick="restartProcess()" class="btn-ghost">重新選擇</button>
                 </div>
                 <span id="levelBadge" class="level-badge"></span>
@@ -255,15 +225,17 @@
             <div id="clubList" class="space-y-3 mb-6"></div>
 
             <button onclick="submitData()" class="w-full btn-submit">
-                🍃 提交 / 更新志願
+                提交 / 更新志願
             </button>
         </div>
+
+        <footer class="credit">國小社團選填系統</footer>
     </div>
 
     <!-- 彈出視窗 (社團簡介 Dialog) -->
     <div id="descModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="modal-card max-w-md w-full p-6 shadow-2xl">
-            <h3 id="modalTitle" class="font-display text-xl font-bold mb-3 border-b pb-2" style="border-color:var(--line)"></h3>
+            <h3 id="modalTitle" class="text-xl font-bold mb-3 border-b pb-2" style="border-color:#E4E4DC"></h3>
             <p id="modalDesc" class="text-sm leading-relaxed mb-6 whitespace-pre-line" style="color:var(--ink-soft)"></p>
             <button onclick="closeModal()" class="w-full btn-close py-2.5 rounded-xl transition">
                 了解，關閉視窗
@@ -280,23 +252,48 @@
         let currentStudent = null;
         let currentFilteredClubs = [];
 
-        window.onload = async () => {
-            if (GAS_URL) {
-                try {
-                    const res = await fetch(GAS_URL);
-                    const data = await res.json();
-                    allStudents = data.students || [];
-                    allClubs = data.clubs || [];
-                    existingRecords = data.existingRecords || {};
-                    renderClasses();
-                } catch (e) {
-                    alert('資料載入失敗，請檢查網路狀態。');
-                }
+        window.onload = () => { loadData(); };
+
+        async function loadData() {
+            const classGrid = document.getElementById('classGrid');
+            classGrid.innerHTML = '<div class="status-box col-span-2">📡 資料載入中，請稍候…</div>';
+
+            if (!GAS_URL) {
+                classGrid.innerHTML = '<div class="status-box error col-span-2">尚未設定資料來源網址（GAS_URL）</div>';
+                return;
             }
-        };
+
+            try {
+                const res = await fetch(GAS_URL);
+                if (!res.ok) throw new Error('伺服器回應錯誤（狀態碼 ' + res.status + '）');
+
+                let data;
+                try {
+                    data = await res.json();
+                } catch (parseErr) {
+                    throw new Error('回傳的內容不是有效的資料格式，請確認 Apps Script 部署設定（存取權限需為「所有人」）');
+                }
+
+                allStudents = data.students || [];
+                allClubs = data.clubs || [];
+                existingRecords = data.existingRecords || {};
+
+                if (allStudents.length === 0) {
+                    classGrid.innerHTML = '<div class="status-box col-span-2">目前查無學生名單，請確認 Google 試算表「學生名單」工作表是否已填入資料<br><span class="retry-btn" onclick="loadData()">重新載入</span></div>';
+                    return;
+                }
+
+                renderClasses();
+            } catch (e) {
+                console.error(e);
+                classGrid.innerHTML =
+                    '<div class="status-box error col-span-2">⚠️ 資料載入失敗<br>' +
+                    (e.message || '請檢查網路連線') +
+                    '<br><span class="retry-btn" onclick="loadData()">重新載入</span></div>';
+            }
+        }
 
         function setTrail(step) {
-            // step: 1 = 選班級, 2 = 選同學, 3 = 排志願
             const dots = { 1: 'dotClass', 2: 'dotStudent', 3: 'dotClub' };
             const labels = { 1: 'labelClass', 2: 'labelStudent', 3: 'labelClub' };
             [1, 2, 3].forEach(i => {
@@ -316,8 +313,8 @@
             const classes = [...new Set(allStudents.map(s => s.className))];
 
             classGrid.innerHTML = '';
-            if(classes.length === 0) {
-                classGrid.innerHTML = '<p class="col-span-2 text-center py-4" style="color:var(--ink-soft)">讀取中或尚未有學生資料...</p>';
+            if (classes.length === 0) {
+                classGrid.innerHTML = '<div class="status-box col-span-2">目前查無班級資料</div>';
                 return;
             }
 
@@ -343,12 +340,16 @@
             const students = allStudents.filter(s => s.className === c);
 
             studentGrid.innerHTML = '';
+            if (students.length === 0) {
+                studentGrid.innerHTML = '<div class="status-box col-span-2">這個班級目前沒有學生資料</div>';
+                return;
+            }
             students.forEach(s => {
                 const card = document.createElement('div');
                 card.className = "student-card";
                 card.onclick = () => selectStudent(s);
                 card.innerHTML = `
-                    <div class="seat-badge">${s.seatNumber}</div>
+                    <div class="seat-label">${s.seatNumber}號</div>
                     <div class="student-name">${s.name}</div>
                 `;
                 studentGrid.appendChild(card);
@@ -383,6 +384,11 @@
         function renderClubs() {
             const clubListEl = document.getElementById('clubList');
             clubListEl.innerHTML = '';
+
+            if (currentFilteredClubs.length === 0) {
+                clubListEl.innerHTML = '<div class="status-box">這個年段目前查無社團資料，請確認「社團資料」工作表的「適用對象」欄位是否正確</div>';
+                return;
+            }
 
             const totalClubs = currentFilteredClubs.length;
             currentFilteredClubs.sort((a, b) => a.rank - b.rank);
@@ -444,7 +450,6 @@
             document.getElementById('descModal').classList.add('hidden');
         }
 
-        // 重新回到選班級的第一頁
         function restartProcess() {
             document.getElementById('stepClub').classList.add('hidden');
             document.getElementById('stepStudent').classList.add('hidden');
