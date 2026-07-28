@@ -20,7 +20,6 @@
         *{ font-family: "Noto Sans TC", sans-serif; }
         body{ background-color: var(--bg-color); color: var(--text-main); }
 
-        /* Banner 淺色背景 */
         .banner-header {
             background: linear-gradient(135deg, #F0F4EC 0%, #E2EAD8 100%);
             border: 2px solid #C2D1B7;
@@ -31,7 +30,6 @@
             box-shadow: 0 4px 15px rgba(61,83,43,0.08);
         }
 
-        /* 橫向步驟條 */
         .trail-container {
             display: flex; flex-direction: row; align-items: center; justify-content: center;
             gap: 12px; margin: 24px 0;
@@ -48,7 +46,6 @@
         .trail-line { flex: 1; max-width: 48px; height: 3px; background: #C2D1B7; border-radius: 2px; margin-bottom: 20px; }
         .trail-line.done { background: #8CA07B; }
 
-        /* 卡片與按鈕 */
         .class-btn {
             background: var(--primary); color: white; border-radius: 16px;
             padding: 22px 10px; font-size: 1.4rem; font-weight: 800;
@@ -65,7 +62,6 @@
         .student-card:hover { border-color: var(--primary); background: #FFF; }
         .student-card:active { transform: scale(0.97); }
 
-        /* 社團清單 */
         .club-row {
             background: #FFF; border: 1.5px solid #E2E8DC; border-left: 6px solid #D1DBC8;
             border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -94,11 +90,8 @@
         .status-box.error { border-color: #E2A082; background: #FDF4F0; color: #B04A22; }
 
         .fixed-club-card {
-            background: #FEF8EC;
-            border: 2px solid #E6A13B;
-            border-radius: 16px;
-            padding: 24px 16px;
-            text-align: center;
+            background: #FEF8EC; border: 2px solid #E6A13B;
+            border-radius: 16px; padding: 24px 16px; text-align: center;
         }
     </style>
 </head>
@@ -138,14 +131,14 @@
             </div>
         </div>
 
-        <!-- 步驟 2：選擇學生卡片 (新增上一步按鈕) -->
+        <!-- 步驟 2：選擇學生卡片 (含上一步按鈕) -->
         <div id="stepStudent" class="hidden">
             <div class="flex justify-between items-center mb-4">
                 <button onclick="backToClassStep()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-3 py-1.5 rounded-lg border border-slate-300 transition flex items-center gap-1">
                     ⬅️ 上一步 (選班級)
                 </button>
                 <h3 id="selectedClassTitle" class="font-black text-base text-slate-700"></h3>
-                <div class="w-12"></div> <!-- 保持標題對齊 -->
+                <div class="w-12"></div>
             </div>
             <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
@@ -160,13 +153,16 @@
                 <span id="levelBadge" class="inline-block bg-emerald-700 text-white font-bold text-xs px-3 py-0.5 rounded-full"></span>
             </div>
 
-            <!-- 校隊鎖定顯示區 -->
+            <!-- 校隊鎖定區 -->
             <div id="fixedClubNotice" class="hidden mb-6">
                 <div class="fixed-club-card">
                     <div class="text-4xl mb-2">🏆</div>
                     <h4 class="font-black text-amber-900 text-lg mb-1">您已由學校指定為校隊成員</h4>
                     <p class="text-amber-800 font-black text-2xl my-3" id="fixedClubName"></p>
-                    <p class="text-xs text-amber-700 mt-2">📌 校隊成員免填志願序，系統已自動為您確認此社團名額。</p>
+                    <p class="text-xs text-amber-700 mt-2 mb-4">📌 校隊成員免填其他志願，請點擊下方按鈕確認送出紀錄。</p>
+                    <button onclick="submitData()" class="w-full btn-submit bg-amber-600 hover:bg-amber-700 text-white">
+                        確認校隊名額並送出
+                    </button>
                 </div>
             </div>
 
@@ -180,11 +176,10 @@
             </div>
         </div>
 
-        <!-- 頁尾製作人 -->
         <footer class="text-center text-slate-400 text-xs mt-8 font-medium">製作人：TATA</footer>
     </div>
 
-    <!-- 彈出視窗 -->
+    <!-- 簡介彈出視窗 -->
     <div id="descModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
             <h3 id="modalTitle" class="text-xl font-bold mb-3 border-b pb-2 text-slate-800"></h3>
@@ -320,9 +315,18 @@
                 document.getElementById('fixedClubNotice').classList.add('hidden');
                 document.getElementById('normalClubArea').classList.remove('hidden');
 
+                // 抓取年級數字 (例如 101 取出 '1', 202 取出 '2')
+                const studentGrade = student.className.charAt(0);
+
                 const studentKey = `${student.className}_${student.seatNumber}`;
                 const pastRecord = existingRecords[studentKey] || {};
-                const clubsForLevel = allClubs.filter(c => c.target === student.level);
+
+                // 過濾：學段符合 且 (無年級限制 或 年級限定符合)
+                const clubsForLevel = allClubs.filter(c => {
+                    const isLevelMatch = c.target === student.level;
+                    const isGradeMatch = !c.gradeLimit || c.gradeLimit === "" || c.gradeLimit === studentGrade;
+                    return isLevelMatch && isGradeMatch;
+                });
 
                 currentFilteredClubs = clubsForLevel.map((club, idx) => {
                     const savedRank = pastRecord[club.name] ? parseInt(pastRecord[club.name]) : (idx + 1);
@@ -413,17 +417,18 @@
         async function submitData() {
             if (!currentStudent) return;
 
-            const preferencesPayload = currentFilteredClubs.map(c => ({
-                clubName: c.name,
-                rank: c.rank
-            }));
+            const isFixed = currentStudent.fixedClub && currentStudent.fixedClub.trim() !== "";
 
             const payload = {
                 className: currentStudent.className,
                 seatNumber: currentStudent.seatNumber,
                 studentName: currentStudent.name,
                 level: currentStudent.level,
-                preferences: preferencesPayload
+                fixedClub: isFixed ? currentStudent.fixedClub : "",
+                preferences: isFixed ? [] : currentFilteredClubs.map(c => ({
+                    clubName: c.name,
+                    rank: c.rank
+                }))
             };
 
             try {
@@ -433,13 +438,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                alert('志願提交/更新成功！已寫入資料庫。');
 
-                const studentKey = `${currentStudent.className}_${currentStudent.seatNumber}`;
-                if (!existingRecords[studentKey]) existingRecords[studentKey] = {};
-                currentFilteredClubs.forEach(c => {
-                    existingRecords[studentKey][c.name] = c.rank;
-                });
+                alert(isFixed ? '校隊名額已成功確認並寫入資料庫！' : '志願提交/更新成功！已寫入資料庫。');
 
             } catch (e) {
                 alert('提交失敗：' + e);
