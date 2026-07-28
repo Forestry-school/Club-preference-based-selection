@@ -12,7 +12,6 @@
             --primary: #4B6339;
             --primary-dark: #374B28;
             --bg-color: #F4F6F0;
-            --card-bg: #FFFFFF;
             --accent: #D98E2B;
             --text-main: #2C3527;
             --text-sub: #6C7A63;
@@ -72,7 +71,7 @@
 
         .rank-select {
             background: #FFF; border: 1.5px solid var(--accent); color: #A8631C;
-            font-weight: 800; font-size: 14px; border-radius: 10px; padding: 6px 10px;
+            font-weight: 800; font-size: 14px; border-radius: 10px; padding: 6px 8px;
         }
         .info-chip {
             background: var(--accent); color: #FFF; font-weight: 700; font-size: 12px;
@@ -182,7 +181,8 @@
     <!-- 簡介彈出視窗 -->
     <div id="descModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-            <h3 id="modalTitle" class="text-xl font-bold mb-3 border-b pb-2 text-slate-800"></h3>
+            <h3 id="modalTitle" class="text-xl font-bold mb-1 text-slate-800"></h3>
+            <div id="modalTeacher" class="text-xs font-bold text-emerald-700 mb-3"></div>
             <p id="modalDesc" class="text-sm leading-relaxed mb-6 text-slate-600 whitespace-pre-line"></p>
             <button onclick="closeModal()" class="w-full bg-emerald-800 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-900 transition">
                 了解，關閉視窗
@@ -315,17 +315,19 @@
                 document.getElementById('fixedClubNotice').classList.add('hidden');
                 document.getElementById('normalClubArea').classList.remove('hidden');
 
-                // 抓取年級數字 (例如 101 取出 '1', 202 取出 '2')
                 const studentGrade = student.className.charAt(0);
-
                 const studentKey = `${student.className}_${student.seatNumber}`;
                 const pastRecord = existingRecords[studentKey] || {};
 
-                // 過濾：學段符合 且 (無年級限制 或 年級限定符合)
+                // 🎯 過濾條件：
+                // 1. 學段符合
+                // 2. 年級限制符合
+                // 3. 🛡️ 自動過濾社團名稱帶有「校隊」的社團 (一般學生看不到校隊選單)
                 const clubsForLevel = allClubs.filter(c => {
                     const isLevelMatch = c.target === student.level;
                     const isGradeMatch = !c.gradeLimit || c.gradeLimit === "" || c.gradeLimit === studentGrade;
-                    return isLevelMatch && isGradeMatch;
+                    const isNotSchoolTeam = !c.name.includes("校隊"); // 隱藏校隊
+                    return isLevelMatch && isGradeMatch && isNotSchoolTeam;
                 });
 
                 currentFilteredClubs = clubsForLevel.map((club, idx) => {
@@ -342,7 +344,7 @@
             clubListEl.innerHTML = '';
 
             if (currentFilteredClubs.length === 0) {
-                clubListEl.innerHTML = '<div class="status-box">這個年段目前查無社團資料</div>';
+                clubListEl.innerHTML = '<div class="status-box">這個年段目前查無一般社團資料</div>';
                 return;
             }
 
@@ -354,7 +356,10 @@
                 const rankClass = club.rank === 1 ? 'rank-1' : club.rank === 2 ? 'rank-2' : club.rank === 3 ? 'rank-3' : '';
                 item.className = `club-row ${rankClass}`;
 
-                const shortDesc = club.desc ? (club.desc.length > 12 ? club.desc.substring(0, 12) + "..." : club.desc) : "點擊查看詳情";
+                // 顯示老師與簡介
+                const teacherText = club.teacher ? `指導老師：${club.teacher}` : '';
+                const descText = club.desc ? club.desc : '點擊查看詳情';
+                const subText = teacherText ? `${teacherText} | ${descText}` : descText;
 
                 let optionsHtml = '';
                 for (let i = 1; i <= totalClubs; i++) {
@@ -369,10 +374,10 @@
                         </select>
                         <div class="truncate">
                             <span class="font-bold text-slate-800 text-sm sm:text-base">[${club.id}] ${club.name}</span>
-                            <p class="text-xs text-slate-500 truncate">${shortDesc}</p>
+                            <p class="text-xs text-slate-500 truncate">${subText}</p>
                         </div>
                     </div>
-                    <button onclick="showModal('${club.name}', \`${club.desc}\`)" class="info-chip flex-shrink-0">
+                    <button onclick="showModal('${club.name}', '${club.teacher}', \`${club.desc}\`)" class="info-chip flex-shrink-0">
                         ℹ️ 簡介
                     </button>
                 `;
@@ -396,8 +401,9 @@
             renderClubs();
         }
 
-        function showModal(title, desc) {
+        function showModal(title, teacher, desc) {
             document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalTeacher').innerText = teacher ? `指導老師：${teacher}` : '';
             document.getElementById('modalDesc').innerText = desc || "暫無詳細簡介。";
             document.getElementById('descModal').classList.remove('hidden');
         }
