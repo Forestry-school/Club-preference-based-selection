@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        .class-btn { background-color: #4d7c0f; color: white; } /* 類似圖片中的綠色卡片 */
+        .class-btn { background-color: #4d7c0f; color: white; }
         .class-btn:hover { background-color: #3f6212; }
     </style>
 </head>
@@ -18,9 +18,7 @@
         <!-- 步驟 1：選擇班級 -->
         <div id="stepClass">
             <h2 class="text-base font-semibold text-slate-700 mb-4 text-center">請選擇班級</h2>
-            <div id="classGrid" class="grid grid-cols-2 gap-4">
-                <!-- 動態生成班級按鈕 (如 101, 102...) -->
-            </div>
+            <div id="classGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
 
         <!-- 步驟 2：選擇學生卡片 -->
@@ -30,14 +28,12 @@
                 <h2 id="selectedClassTitle" class="text-base font-semibold text-slate-700"></h2>
                 <div></div>
             </div>
-            <div id="studentGrid" class="grid grid-cols-2 gap-4">
-                <!-- 動態生成學生卡片 (如 01號 黃渝皓) -->
-            </div>
+            <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
 
         <!-- 步驟 3：社團排序區 -->
         <div id="stepClub" class="hidden">
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
                 <div class="flex justify-between items-center mb-1">
                     <span id="studentInfo" class="font-bold text-blue-900 text-lg"></span>
                     <button onclick="goBackToStudent()" class="text-xs text-blue-600 underline">切換學生</button>
@@ -45,7 +41,8 @@
                 <span id="levelBadge" class="inline-block bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded-full font-semibold"></span>
             </div>
 
-            <h2 class="text-base font-semibold text-slate-700 mb-2">請拖曳調整社團志願順序（最上方為第一志願）</h2>
+            <p class="text-xs text-slate-500 mb-3 text-center">💡 點擊社團可檢視詳細簡介，上下拖曳可調整志願順序（最上方為第一志願）</p>
+
             <ul id="clubList" class="space-y-2 mb-6"></ul>
 
             <div class="flex flex-col sm:flex-row gap-3">
@@ -59,74 +56,43 @@
         </div>
     </div>
 
+    <!-- 彈出視窗 (社團簡介 Dialog) -->
+    <div id="descModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-800 mb-3 border-b pb-2"></h3>
+            <p id="modalDesc" class="text-slate-600 text-sm leading-relaxed mb-6 whitespace-pre-line"></p>
+            <button onclick="closeModal()" class="w-full bg-slate-800 text-white font-bold py-2.5 rounded-xl hover:bg-slate-700 transition">
+                了解，關閉視窗
+            </button>
+        </div>
+    </div>
+
     <script>
-        // ⚠️ 請在此處貼上您的 Google Apps Script URL
-        const GAS_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
-
-        // 預設預備學生資料 (當 GAS 未連線時備用測試)
-        let mockStudents = [
-            { className: '101', seatNumber: '01', name: '黃渝皓', level: '國小低年級' },
-            { className: '101', seatNumber: '02', name: '蘇照升', level: '國小低年級' },
-            { className: '101', seatNumber: '03', name: '李宥賦', level: '國小低年級' },
-            { className: '101', seatNumber: '04', name: '賴其毅', level: '國小低年級' },
-            { className: '201', seatNumber: '01', name: '張小明', level: '國小中高年級' },
-            { className: 'C01', seatNumber: '01', name: '陳大天', level: '國中' }
-        ];
-
-        // 社團資料庫
-        const clubData = [
-            { id: 'A01', name: '藝術探索', target: '國小低年級', desc: '啟發色彩與創意繪畫能力。' },
-            { id: 'A02', name: '高爾夫', target: '國小低年級', desc: '培養揮桿姿勢與體育精神。' },
-            { id: 'A03', name: '圍棋', target: '國小低年級', desc: '訓練邏輯思考與專注力。' },
-            { id: 'A04', name: '加點魔法科學', target: '國小低年級', desc: '趣味科學實驗與魔術體驗。' },
-            { id: 'A05', name: '直排輪', target: '國小低年級', desc: '鍛鍊身體協調性與平衡感。' },
-            { id: 'A06', name: '跆拳道', target: '國小低年級', desc: '學習禮儀與自我防衛技能。' },
-            { id: 'A07', name: '律動舞蹈', target: '國小低年級', desc: '結合音樂與身體律動舞蹈。' },
-            { id: 'A08', name: '桌球', target: '國小低年級', desc: '反應力與手眼協調訓練。' },
-            { id: 'A09', name: 'STEAM 研究社', target: '國小低年級', desc: '跨領域手作與科學探究。' },
-            { id: 'A10', name: '小提琴(一)', target: '國小低年級', desc: '基礎弦樂入門與樂理學習。' },
-            { id: 'A11', name: '小提琴(二)', target: '國小低年級', desc: '進階小提琴演奏技巧。' },
-            { id: 'A12', name: '大提琴', target: '國小低年級', desc: '低音弦樂器入門體驗。' },
-            { id: 'B01', name: '瑞奇魔術', target: '國小中高年級', desc: '舞台魔術與手眼協調訓練。' },
-            { id: 'B02', name: '流行舞蹈', target: '國小中高年級', desc: '流行音樂MV舞蹈編排。' },
-            { id: 'B03', name: '小提琴(中)', target: '國小中高年級', desc: '中級小提琴合奏與獨奏。' },
-            { id: 'B04', name: '直排輪', target: '國小中高年級', desc: '進階直排輪過彎與技巧。' },
-            { id: 'B05', name: '跆拳道', target: '國小中高年級', desc: '品勢與對打基本訓練。' },
-            { id: 'B06', name: '科技動力積木', target: '國小中高年級', desc: '齒輪結構與動力機械製作。' },
-            { id: 'B07', name: '英語桌遊', target: '國小中高年級', desc: '沉浸式英語桌遊互動。' },
-            { id: 'B08', name: '大提琴', target: '國小中高年級', desc: '大提琴經典曲目彈奏。' },
-            { id: 'C01', name: '羽球', target: '國中', desc: '球路訓練與單雙打實戰。' },
-            { id: 'C02', name: '西洋劍', target: '國中', desc: '擊劍步法與戰術對決。' },
-            { id: 'C03', name: '音樂欣賞與創作', target: '國中', desc: '數位音樂製作與樂賞。' },
-            { id: 'C04', name: '高爾夫', target: '國中', desc: '揮桿打擊與高爾夫觀念。' },
-            { id: 'C05', name: '籃球', target: '國中', desc: '團隊戰術與個人投籃過人。' },
-            { id: 'C06', name: '熱舞社', target: '國中', desc: 'Street Dance 與 Hip-hop 舞步。' },
-            { id: 'C07', name: '益智桌遊', target: '國中', desc: '策略桌遊與陣營心理戰。' },
-            { id: 'C08', name: '桌球', target: '國中', desc: '發球旋轉與快攻戰術。' },
-            { id: 'C09', name: '科學實驗', target: '國中', desc: '理化進階實驗與專題。' }
-        ];
+        // ⚠️ 請在此處貼上您的 Google Apps Script Web App URL
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwysSOartamBcSLu63YM0ZDVBHF9SU4ZhjA3yCYXK302LTvAtgRLqh4xEiP0yhHcxZxHg/exec";
 
         let allStudents = [];
-        let currentClass = "";
+        let allClubs = [];
         let currentStudent = null;
         let sortableInstance = null;
 
-        // 初始化載入
+        // 初始化：從 Google Sheet 取得學生與社團資料
         window.onload = async () => {
             if (GAS_URL && GAS_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
                 try {
                     const res = await fetch(GAS_URL);
-                    allStudents = await res.json();
+                    const data = await res.json();
+                    allStudents = data.students;
+                    allClubs = data.clubs;
+                    renderClasses();
                 } catch (e) {
-                    allStudents = mockStudents;
+                    alert('資料載入失敗，請檢查 Google Apps Script 網址或網路狀況。');
                 }
             } else {
-                allStudents = mockStudents;
+                alert('請先在 index.html 填入您的 Google Apps Script URL！');
             }
-            renderClasses();
         };
 
-        // 渲染班級列表 (類似圖片一)
         function renderClasses() {
             const classGrid = document.getElementById('classGrid');
             const classes = [...new Set(allStudents.map(s => s.className))];
@@ -142,14 +108,12 @@
         }
 
         function selectClass(c) {
-            currentClass = c;
             document.getElementById('stepClass').classList.add('hidden');
             document.getElementById('stepStudent').classList.remove('hidden');
             document.getElementById('selectedClassTitle').innerText = `${c} 班學生名單`;
             renderStudents(c);
         }
 
-        // 渲染學生卡片 (類似圖片二)
         function renderStudents(c) {
             const studentGrid = document.getElementById('studentGrid');
             const students = allStudents.filter(s => s.className === c);
@@ -178,26 +142,34 @@
             renderClubs(student.level);
         }
 
-        // 載入該學制的社團列表並啟用拖曳
         function renderClubs(level) {
             const clubListEl = document.getElementById('clubList');
             clubListEl.innerHTML = '';
 
-            const filtered = clubData.filter(c => c.target === level);
+            const filtered = allClubs.filter(c => c.target === level);
             filtered.forEach((club, index) => {
                 const li = document.createElement('li');
                 li.className = "bg-white p-3 border border-slate-200 rounded-xl shadow-sm flex items-center justify-between cursor-move hover:border-blue-400 transition";
                 li.setAttribute('data-id', club.id);
                 li.setAttribute('data-name', club.name);
+                
+                // 簡短顯示前 15 個字
+                const shortDesc = club.desc ? (club.desc.length > 15 ? club.desc.substring(0, 15) + "..." : club.desc) : "點擊查看詳情";
+
                 li.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <span class="rank-num bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-lg text-sm">${index + 1}</span>
-                        <div>
+                    <div class="flex items-center space-x-3 overflow-hidden">
+                        <span class="rank-num bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-lg text-sm flex-shrink-0">${index + 1}</span>
+                        <div class="truncate">
                             <span class="font-bold text-slate-800">[${club.id}] ${club.name}</span>
-                            <p class="text-xs text-slate-500">${club.desc}</p>
+                            <p class="text-xs text-slate-500 truncate">${shortDesc}</p>
                         </div>
                     </div>
-                    <div class="text-slate-400">☰</div>
+                    <div class="flex items-center space-x-2 flex-shrink-0">
+                        <button onclick="showModal('${club.name}', \`${club.desc}\`)" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold px-2 py-1 rounded-md transition">
+                            ℹ️ 簡介
+                        </button>
+                        <span class="text-slate-300">☰</span>
+                    </div>
                 `;
                 clubListEl.appendChild(li);
             });
@@ -213,6 +185,17 @@
             });
         }
 
+        // 顯示社團詳細簡介
+        function showModal(title, desc) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc || "暫無詳細簡介。";
+            document.getElementById('descModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('descModal').classList.add('hidden');
+        }
+
         function goBackToClass() {
             document.getElementById('stepStudent').classList.add('hidden');
             document.getElementById('stepClass').classList.remove('hidden');
@@ -223,7 +206,6 @@
             document.getElementById('stepStudent').classList.remove('hidden');
         }
 
-        // 提交至 Google Sheet
         async function submitData() {
             if (!currentStudent) return;
             const preferences = getPreferences();
@@ -243,13 +225,12 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                alert('志願提交成功！');
+                alert('志願提交成功！已寫入 Google Sheet。');
             } catch (e) {
                 alert('提交失敗：' + e);
             }
         }
 
-        // 匯出 CSV 檔案
         function exportCSV() {
             if (!currentStudent) return;
             const preferences = getPreferences();
