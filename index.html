@@ -20,21 +20,23 @@
         *{ font-family: "Noto Sans TC", sans-serif; }
         body{ background-color: var(--bg-color); color: var(--text-main); }
 
+        /* ===== 修正重點：改為淺色背景 Banner，凸顯深色 Logo ===== */
         .banner-header {
-            background: linear-gradient(135deg, #5F7A4C 0%, #3D532B 100%);
+            background: linear-gradient(135deg, #F0F4EC 0%, #E2EAD8 100%);
+            border: 2px solid #C2D1B7;
             border-radius: 20px;
-            color: white;
+            color: var(--text-main);
             padding: 24px 16px;
             text-align: center;
-            box-shadow: 0 8px 20px rgba(61,83,43,0.15);
+            box-shadow: 0 4px 15px rgba(61,83,43,0.08);
         }
 
-        /* ===== 修正重點：橫向步驟條 (Left to Right) ===== */
+        /* 橫向步驟條 */
         .trail-container {
             display: flex;
-            flex-direction: row;       /* 強制橫向排列 */
-            align-items: center;      /* 垂直居中 */
-            justify-content: center;  /* 水平居中 */
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
             gap: 12px;
             margin: 24px 0;
         }
@@ -60,7 +62,7 @@
             height: 3px;
             background: #C2D1B7;
             border-radius: 2px;
-            margin-bottom: 20px;       /* 對齊文字產生的空隙 */
+            margin-bottom: 20px;
         }
         .trail-line.done { background: #8CA07B; }
 
@@ -113,14 +115,14 @@
 <body class="py-6 px-4">
     <div class="max-w-xl mx-auto bg-white rounded-3xl shadow-xl p-5 sm:p-7">
         
-        <!-- 頂部 Banner -->
+        <!-- 頂部 Banner（已改為淺色系） -->
         <div class="banner-header">
-            <img id="schoolLogo" src="logo.png" alt="學校Logo" class="mx-auto h-14 mb-2 object-contain" onerror="this.style.display='none'">
-            <h2 class="text-xl sm:text-2xl font-black tracking-wide">115學年度 第一學期</h2>
-            <h3 class="text-sm sm:text-base font-semibold opacity-90 mt-1">線上選社志願序</h3>
+            <img id="schoolLogo" src="logo.png" alt="學校Logo" class="mx-auto h-16 mb-3 object-contain" onerror="this.style.display='none'">
+            <h2 class="text-xl sm:text-2xl font-black tracking-wide text-emerald-950">115學年度 第一學期</h2>
+            <h3 class="text-sm sm:text-base font-bold text-emerald-800 mt-1">線上選社志願序</h3>
         </div>
 
-        <!-- 修正重點：左到右（橫向）步驟列 -->
+        <!-- 橫向步驟列 -->
         <div class="trail-container" id="trail">
             <div class="trail-step">
                 <div class="trail-dot active" id="dotClass">1</div>
@@ -173,7 +175,7 @@
             </button>
         </div>
 
-        <!-- 修正重點：頁尾製作人名稱 -->
+        <!-- 頁尾製作人 -->
         <footer class="text-center text-slate-400 text-xs mt-8 font-medium">製作人：TATA</footer>
     </div>
 
