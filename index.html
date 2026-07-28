@@ -5,148 +5,146 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>115學年度 第一學期 線上選社志願序</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        *{ font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif; }
-        body{ background: #FFF9F2; color: #4A3E3D; }
+        body{ background: #F3F4F6; color: #1F2937; font-family: 'Noto Sans TC', sans-serif; }
+        .font-serif { font-family: 'Noto Serif TC', serif; }
 
-        .app-card {
-            background: #FFFFFF; border: 4px solid #FFE4C4;
-            border-radius: 32px; box-shadow: 0 12px 0 #FCE2C2;
-        }
-
-        .header-box {
-            background: #FF9F43; border-radius: 24px; color: white;
-            padding: 20px 16px; text-align: center; box-shadow: 0 6px 0 #E07A1A;
+        .header-card {
+            background: #1E293B; border-bottom: 4px solid #D97706; color: white;
+            padding: 24px 16px; text-align: center; border-radius: 20px 20px 0 0;
         }
 
         .trail-dot {
-            width: 40px; height: 40px; border-radius: 50%;
+            width: 36px; height: 36px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 16px; border: 3px solid #FFE0B2; background: #FFF;
-            color: #FF9F43; font-weight: 900; transition: .2s ease;
+            font-size: 14px; border: 2px solid #CBD5E1; background: #FFF;
+            color: #64748B; font-weight: 700; transition: .2s ease;
         }
-        .trail-dot.active { background: #FF9F43; border-color: #FF9F43; color: #FFF; transform: scale(1.1); }
-        .trail-dot.done { background: #FFC048; border-color: #FFC048; color: #FFF; }
-        .trail-label { font-size: 13px; color: #B38F7A; font-weight: 900; }
-        .trail-label.active { color: #E07A1A; }
-        .trail-line { width: 32px; height: 4px; background: #FFE0B2; border-radius: 4px; margin-bottom: 20px; }
-        .trail-line.done { background: #FFC048; }
+        .trail-dot.active { background: #1E293B; border-color: #1E293B; color: #F59E0B; }
+        .trail-dot.done { background: #475569; border-color: #475569; color: #FFF; }
+        .trail-label { font-size: 12px; color: #64748B; font-weight: 700; }
+        .trail-label.active { color: #1E293B; }
+        .trail-line { width: 32px; height: 2px; background: #CBD5E1; border-radius: 2px; margin-bottom: 18px; }
+        .trail-line.done { background: #475569; }
 
         .class-btn {
-            background: #FF9F43; color: white; border-radius: 20px;
-            padding: 20px 10px; font-size: 1.5rem; font-weight: 900;
-            box-shadow: 0 6px 0 #E07A1A; transition: .1s ease; border: none;
+            background: #1E293B; color: #F8FAFC; border-radius: 12px;
+            padding: 20px 10px; font-size: 1.4rem; font-weight: 800;
+            border-bottom: 4px solid #0F172A; transition: .15s ease;
         }
-        .class-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #E07A1A; }
+        .class-btn:hover { background: #334155; }
+        .class-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
 
         .student-card {
-            background: #FFF0F5; border: 3px solid #FFD1DC;
-            border-radius: 20px; padding: 16px 10px; text-align: center;
-            cursor: pointer; box-shadow: 0 5px 0 #FFC0CB; transition: .1s ease;
+            background: #FFF; border: 1px solid #E2E8F0;
+            border-radius: 12px; padding: 18px 10px; text-align: center;
+            cursor: pointer; transition: .15s ease;
         }
-        .student-card:active { transform: translateY(3px); box-shadow: 0 2px 0 #FFC0CB; }
+        .student-card:hover { border-color: #D97706; background: #FEF3C7/30; }
 
         .club-row {
-            background: #FFF; border: 3px solid #F0E6DF;
-            border-radius: 20px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            background: #FFF; border: 1px solid #E2E8F0; border-left: 5px solid #94A3B8;
+            border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
         }
-        .club-row.rank-1 { border-color: #FF9F43; background: #FFFBF5; }
-        .club-row.rank-2 { border-color: #54A0FF; background: #F5F9FF; }
-        .club-row.rank-3 { border-color: #5F27CD; background: #F8F5FF; }
+        .club-row.rank-1 { border-left-color: #D97706; }
+        .club-row.rank-2 { border-left-color: #1E293B; }
+        .club-row.rank-3 { border-left-color: #475569; }
 
         .rank-select {
-            background: #FFF; border: 2px solid #FF9F43; color: #E07A1A;
-            font-weight: 900; font-size: 14px; border-radius: 12px; padding: 6px 10px;
+            background: #FFF; border: 1.5px solid #D97706; color: #92400E;
+            font-weight: 800; font-size: 14px; border-radius: 8px; padding: 6px 10px;
         }
         .info-chip {
-            background: #FF6B6B; color: #FFF; font-weight: 900; font-size: 13px;
-            padding: 6px 12px; border-radius: 12px; box-shadow: 0 3px 0 #EE5253;
+            background: #D97706; color: #FFF; font-weight: 700; font-size: 12px;
+            padding: 6px 12px; border-radius: 6px; transition: .2s;
         }
 
         .btn-submit {
-            background: #10AC84; color: white; font-weight: 900; font-size: 1.2rem;
-            padding: 16px; border-radius: 20px; box-shadow: 0 6px 0 #0E8667;
+            background: #1E293B; color: #F59E0B; font-weight: 900; font-size: 1.1rem;
+            padding: 16px; border-radius: 12px; border: 1px solid #D97706;
         }
-        .btn-submit:active { transform: translateY(4px); box-shadow: 0 2px 0 #0E8667; }
+        .btn-submit:hover { background: #0F172A; }
 
-        .status-box { border: 3px dashed #FFD1DC; border-radius: 20px; padding: 24px; text-align: center; color: #A88; }
-        .status-box.error { border-color: #FF6B6B; background: #FFEAEA; color: #EE5253; }
+        .status-box { border: 2px dashed #CBD5E1; border-radius: 12px; padding: 24px; text-align: center; color: #64748B; }
+        .status-box.error { border-color: #F87171; background: #FEF2F2; color: #991B1B; }
     </style>
 </head>
 <body class="py-8 px-4">
-    <div class="max-w-xl mx-auto app-card p-6 sm:p-8">
+    <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
         
-        <!-- Banner -->
-        <div class="header-box mb-6">
+        <!-- Header -->
+        <div class="header-card">
             <img id="schoolLogo" src="logo.png" alt="學校Logo" class="mx-auto h-14 mb-2 object-contain" onerror="this.style.display='none'">
-            <h2 class="text-2xl font-black">115學年度 第一學期</h2>
-            <h3 class="text-base font-bold opacity-90">🎈 線上選社志願序 🎈</h3>
+            <h2 class="text-xl sm:text-2xl font-serif font-black tracking-wide text-amber-400">115學年度 第一學期</h2>
+            <h3 class="text-sm sm:text-base font-semibold text-slate-300 mt-1">線上選社志願序登記</h3>
         </div>
 
-        <!-- 步驟軌跡 -->
-        <div class="trail" id="trail">
-            <div class="flex flex-col items-center gap-1">
-                <div class="trail-dot active" id="dotClass">1</div>
-                <span class="trail-label active" id="labelClass">選班級</span>
-            </div>
-            <div class="trail-line" id="lineOne"></div>
-            <div class="flex flex-col items-center gap-1">
-                <div class="trail-dot" id="dotStudent">2</div>
-                <span class="trail-label" id="labelStudent">選同學</span>
-            </div>
-            <div class="trail-line" id="lineTwo"></div>
-            <div class="flex flex-col items-center gap-1">
-                <div class="trail-dot" id="dotClub">3</div>
-                <span class="trail-label" id="labelClub">排志願</span>
-            </div>
-        </div>
-
-        <!-- 步驟 1 -->
-        <div id="stepClass">
-            <h3 class="font-black text-center text-base text-amber-900 mb-4">👇 請點選班級</h3>
-            <div id="classGrid" class="grid grid-cols-2 gap-4">
-                <div class="status-box col-span-2">📡 資料載入中，請稍候…</div>
-            </div>
-        </div>
-
-        <!-- 步驟 2 -->
-        <div id="stepStudent" class="hidden">
-            <div class="text-center mb-4">
-                <h3 id="selectedClassTitle" class="font-black text-center text-lg text-amber-900"></h3>
-            </div>
-            <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
-        </div>
-
-        <!-- 步驟 3 -->
-        <div id="stepClub" class="hidden">
-            <div class="bg-amber-100 border-2 border-amber-300 rounded-2xl p-4 mb-4">
-                <div class="flex justify-between items-center mb-1">
-                    <span id="studentInfo" class="font-black text-xl text-amber-950"></span>
-                    <button onclick="restartProcess()" class="text-xs bg-white text-amber-800 font-bold px-3 py-1 rounded-xl border border-amber-300">重新選擇</button>
+        <div class="p-6 sm:p-8">
+            <!-- 步驟軌跡 -->
+            <div class="trail" id="trail">
+                <div class="flex flex-col items-center gap-1">
+                    <div class="trail-dot active" id="dotClass">1</div>
+                    <span class="trail-label active" id="labelClass">選班級</span>
                 </div>
-                <span id="levelBadge" class="inline-block bg-amber-500 text-white font-bold text-xs px-3 py-0.5 rounded-full"></span>
+                <div class="trail-line" id="lineOne"></div>
+                <div class="flex flex-col items-center gap-1">
+                    <div class="trail-dot" id="dotStudent">2</div>
+                    <span class="trail-label" id="labelStudent">選同學</span>
+                </div>
+                <div class="trail-line" id="lineTwo"></div>
+                <div class="flex flex-col items-center gap-1">
+                    <div class="trail-dot" id="dotClub">3</div>
+                    <span class="trail-label" id="labelClub">排志願</span>
+                </div>
             </div>
 
-            <p class="text-xs text-amber-800 font-bold mb-4 text-center">💡 請選擇志願號碼（1 為最想上的社團）</p>
+            <!-- 步驟 1 -->
+            <div id="stepClass">
+                <h3 class="font-bold text-center text-sm text-slate-500 mb-4 uppercase tracking-widest">請選擇班級</h3>
+                <div id="classGrid" class="grid grid-cols-2 gap-4">
+                    <div class="status-box col-span-2">📡 資料載入中，請稍候…</div>
+                </div>
+            </div>
 
-            <div id="clubList" class="space-y-3 mb-6"></div>
+            <!-- 步驟 2 -->
+            <div id="stepStudent" class="hidden">
+                <div class="text-center mb-4">
+                    <h3 id="selectedClassTitle" class="font-bold text-center text-base text-slate-800"></h3>
+                </div>
+                <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
+            </div>
 
-            <button onclick="submitData()" class="w-full btn-submit">
-                送出志願！
-            </button>
+            <!-- 步驟 3 -->
+            <div id="stepClub" class="hidden">
+                <div class="bg-slate-100 border-l-4 border-amber-600 rounded-r-xl p-4 mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <span id="studentInfo" class="font-bold text-lg text-slate-900"></span>
+                        <button onclick="restartProcess()" class="text-xs bg-white text-slate-700 font-bold px-3 py-1 rounded border border-slate-300">重新選擇</button>
+                    </div>
+                    <span id="levelBadge" class="inline-block bg-slate-800 text-amber-400 font-bold text-xs px-3 py-0.5 rounded-full"></span>
+                </div>
+
+                <p class="text-xs text-slate-500 mb-4 text-center">💡 請為每個社團選擇志願序號（數字 1 為第一志願），點擊 ℹ️ 可查看簡介</p>
+
+                <div id="clubList" class="space-y-3 mb-6"></div>
+
+                <button onclick="submitData()" class="w-full btn-submit">
+                    提交 / 更新志願
+                </button>
+            </div>
+
+            <footer class="text-center text-slate-400 text-xs mt-8">國小社團選填系統</footer>
         </div>
-
-        <footer class="text-center text-amber-700/50 font-bold text-xs mt-8">國小社團選填系統</footer>
     </div>
 
     <!-- Modal -->
-    <div id="descModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl border-4 border-amber-300 max-w-md w-full p-6 shadow-2xl">
-            <h3 id="modalTitle" class="text-xl font-black mb-3 border-b-2 border-amber-200 pb-2 text-amber-900"></h3>
-            <p id="modalDesc" class="text-sm font-bold leading-relaxed mb-6 text-slate-600 whitespace-pre-line"></p>
-            <button onclick="closeModal()" class="w-full bg-amber-500 text-white font-black py-3 rounded-2xl shadow-md">
-                知道囉！關閉
+    <div id="descModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <h3 id="modalTitle" class="text-xl font-bold mb-3 border-b pb-2 text-slate-800"></h3>
+            <p id="modalDesc" class="text-sm leading-relaxed mb-6 text-slate-600 whitespace-pre-line"></p>
+            <button onclick="closeModal()" class="w-full bg-slate-800 text-amber-400 font-bold py-2.5 rounded-xl hover:bg-slate-900 transition">
+                關閉視窗
             </button>
         </div>
     </div>
@@ -181,13 +179,13 @@
                 existingRecords = data.existingRecords || {};
 
                 if (allStudents.length === 0) {
-                    classGrid.innerHTML = '<div class="status-box col-span-2">目前查無學生名單<br><button class="mt-2 text-xs bg-amber-500 text-white px-3 py-1 rounded-xl" onclick="loadData()">重新載入</button></div>';
+                    classGrid.innerHTML = '<div class="status-box col-span-2">目前查無學生名單<br><button class="mt-2 text-xs bg-slate-800 text-amber-400 px-3 py-1 rounded" onclick="loadData()">重新載入</button></div>';
                     return;
                 }
 
                 renderClasses();
             } catch (e) {
-                classGrid.innerHTML = '<div class="status-box error col-span-2">⚠️ 資料載入失敗<br>' + (e.message || '請檢查網路連線') + '<br><button class="mt-2 text-xs bg-red-500 text-white px-3 py-1 rounded-xl" onclick="loadData()">重新載入</button></div>';
+                classGrid.innerHTML = '<div class="status-box error col-span-2">⚠️ 資料載入失敗<br>' + (e.message || '請檢查網路連線') + '<br><button class="mt-2 text-xs bg-red-600 text-white px-3 py-1 rounded" onclick="loadData()">重新載入</button></div>';
             }
         }
 
@@ -238,8 +236,8 @@
                 card.className = "student-card";
                 card.onclick = () => selectStudent(s);
                 card.innerHTML = `
-                    <div class="text-pink-400 font-bold text-xs mb-1">${s.seatNumber}號</div>
-                    <div class="text-slate-800 font-black text-2xl">${s.name}</div>
+                    <div class="text-slate-400 font-medium text-xs mb-1">${s.seatNumber}號</div>
+                    <div class="text-slate-800 font-bold text-2xl">${s.name}</div>
                 `;
                 studentGrid.appendChild(card);
             });
@@ -293,8 +291,8 @@
                             ${optionsHtml}
                         </select>
                         <div class="truncate">
-                            <span class="font-black text-slate-800 text-sm sm:text-base">[${club.id}] ${club.name}</span>
-                            <p class="text-xs text-slate-400 font-bold truncate">${shortDesc}</p>
+                            <span class="font-bold text-slate-800 text-sm sm:text-base">[${club.id}] ${club.name}</span>
+                            <p class="text-xs text-slate-500 truncate">${shortDesc}</p>
                         </div>
                     </div>
                     <button onclick="showModal('${club.name}', \`${club.desc}\`)" class="info-chip flex-shrink-0">
