@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>115學年度 第一學期 線上選社志願序</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         .class-btn { background-color: #4d7c0f; color: white; }
         .class-btn:hover { background-color: #3f6212; }
@@ -16,7 +15,6 @@
         
         <!-- 頂部 Logo 與標頭區 -->
         <div class="text-center mb-6">
-            <!-- 直接讀取同目錄下的 logo.png -->
             <img id="schoolLogo" src="logo.png" alt="學校Logo" class="mx-auto h-20 mb-3 object-contain">
             <h1 class="text-xl sm:text-2xl font-bold text-slate-800">115學年度 第一學期</h1>
             <h2 class="text-lg font-semibold text-slate-600 mt-1">線上選社志願序</h2>
@@ -40,7 +38,7 @@
             <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
 
-        <!-- 步驟 3：社團排序區 -->
+        <!-- 步驟 3：社團選擇區 -->
         <div id="stepClub" class="hidden">
             <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
                 <div class="flex justify-between items-center mb-1">
@@ -50,18 +48,13 @@
                 <span id="levelBadge" class="inline-block bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded-full font-semibold"></span>
             </div>
 
-            <p class="text-xs text-slate-500 mb-3 text-center">💡 點擊社團可檢視詳細簡介，上下拖曳可調整志願順序（最上方為第一志願）</p>
+            <p class="text-xs text-slate-500 mb-3 text-center">💡 請為每個社團選擇志願序號（數字 1 為第一志願），點擊 ℹ️ 可查看簡介</p>
 
-            <ul id="clubList" class="space-y-2 mb-6"></ul>
+            <div id="clubList" class="space-y-3 mb-6"></div>
 
-            <div class="flex flex-col sm:flex-row gap-3">
-                <button onclick="submitData()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow transition">
-                    提交志願
-                </button>
-                <button onclick="exportCSV()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow transition">
-                    匯出 CSV 檔
-                </button>
-            </div>
+            <button onclick="submitData()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow transition text-lg">
+                提交 / 更新志願
+            </button>
         </div>
     </div>
 
@@ -81,8 +74,9 @@
 
         let allStudents = [];
         let allClubs = [];
+        let existingRecords = {};
         let currentStudent = null;
-        let sortableInstance = null;
+        let currentFilteredClubs = [];
 
         window.onload = async () => {
             if (GAS_URL) {
@@ -91,9 +85,10 @@
                     const data = await res.json();
                     allStudents = data.students || [];
                     allClubs = data.clubs || [];
+                    existingRecords = data.existingRecords || {};
                     renderClasses();
                 } catch (e) {
-                    alert('資料載入失敗，請檢查 Google Apps Script 設定或網路狀態。');
+                    alert('資料載入失敗，請檢查網路狀態。');
                 }
             }
         };
@@ -149,49 +144,76 @@
             document.getElementById('studentInfo').innerText = `${student.className}班 ${student.seatNumber}號 ${student.name}`;
             document.getElementById('levelBadge').innerText = student.level;
 
-            renderClubs(student.level);
+            // 檢查該生先前是否有填過紀錄
+            const studentKey = `${student.className}_${student.seatNumber}`;
+            const pastRecord = existingRecords[studentKey] || {};
+
+            // 篩選出該學制社團
+            const clubsForLevel = allClubs.filter(c => c.target === student.level);
+
+            currentFilteredClubs = clubsForLevel.map((club, idx) => {
+                // 如果先前有紀錄就帶入，否則預設 1, 2, 3...
+                const savedRank = pastRecord[club.name] ? parseInt(pastRecord[club.name]) : (idx + 1);
+                return {
+                    ...club,
+                    rank: savedRank
+                };
+            });
+
+            renderClubs();
         }
 
-        function renderClubs(level) {
+        function renderClubs() {
             const clubListEl = document.getElementById('clubList');
             clubListEl.innerHTML = '';
 
-            const filtered = allClubs.filter(c => c.target === level);
-            filtered.forEach((club, index) => {
-                const li = document.createElement('li');
-                li.className = "bg-white p-3 border border-slate-200 rounded-xl shadow-sm flex items-center justify-between cursor-move hover:border-blue-400 transition";
-                li.setAttribute('data-id', club.id);
-                li.setAttribute('data-name', club.name);
-                
-                const shortDesc = club.desc ? (club.desc.length > 15 ? club.desc.substring(0, 15) + "..." : club.desc) : "點擊查看詳情";
+            const totalClubs = currentFilteredClubs.length;
+            currentFilteredClubs.sort((a, b) => a.rank - b.rank);
 
-                li.innerHTML = `
-                    <div class="flex items-center space-x-3 overflow-hidden">
-                        <span class="rank-num bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-lg text-sm flex-shrink-0">${index + 1}</span>
+            currentFilteredClubs.forEach((club) => {
+                const item = document.createElement('div');
+                item.className = "bg-white p-3 border border-slate-200 rounded-xl shadow-sm flex items-center justify-between gap-2";
+                
+                const shortDesc = club.desc ? (club.desc.length > 12 ? club.desc.substring(0, 12) + "..." : club.desc) : "點擊查看詳情";
+
+                let optionsHtml = '';
+                for (let i = 1; i <= totalClubs; i++) {
+                    const selected = (i === club.rank) ? 'selected' : '';
+                    optionsHtml += `<option value="${i}" ${selected}>第 ${i} 志願</option>`;
+                }
+
+                item.innerHTML = `
+                    <div class="flex items-center space-x-2 overflow-hidden flex-1">
+                        <select onchange="changeRank('${club.id}', this.value)" class="bg-blue-50 border border-blue-300 text-blue-900 font-bold text-sm rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                            ${optionsHtml}
+                        </select>
                         <div class="truncate">
-                            <span class="font-bold text-slate-800">[${club.id}] ${club.name}</span>
+                            <span class="font-bold text-slate-800 text-sm sm:text-base">[${club.id}] ${club.name}</span>
                             <p class="text-xs text-slate-500 truncate">${shortDesc}</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2 flex-shrink-0">
-                        <button onclick="showModal('${club.name}', \`${club.desc}\`)" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold px-2 py-1 rounded-md transition">
-                            ℹ️ 簡介
-                        </button>
-                        <span class="text-slate-300">☰</span>
-                    </div>
+                    <button onclick="showModal('${club.name}', \`${club.desc}\`)" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold px-2.5 py-1.5 rounded-md transition flex-shrink-0">
+                        ℹ️ 簡介
+                    </button>
                 `;
-                clubListEl.appendChild(li);
+                clubListEl.appendChild(item);
             });
+        }
 
-            if (sortableInstance) sortableInstance.destroy();
-            sortableInstance = new Sortable(clubListEl, {
-                animation: 150,
-                onEnd: () => {
-                    document.querySelectorAll('#clubList li').forEach((item, idx) => {
-                        item.querySelector('.rank-num').textContent = idx + 1;
-                    });
-                }
-            });
+        function changeRank(clubId, newRank) {
+            newRank = parseInt(newRank);
+            const targetClub = currentFilteredClubs.find(c => c.id === clubId);
+            const oldRank = targetClub.rank;
+
+            if (oldRank === newRank) return;
+
+            const replacedClub = currentFilteredClubs.find(c => c.rank === newRank);
+            if (replacedClub) {
+                replacedClub.rank = oldRank;
+            }
+            targetClub.rank = newRank;
+
+            renderClubs();
         }
 
         function showModal(title, desc) {
@@ -216,14 +238,19 @@
 
         async function submitData() {
             if (!currentStudent) return;
-            const preferences = getPreferences();
+
+            // 打包成 [{clubName: '直排輪', rank: 1}, ...]
+            const preferencesPayload = currentFilteredClubs.map(c => ({
+                clubName: c.name,
+                rank: c.rank
+            }));
 
             const payload = {
                 className: currentStudent.className,
                 seatNumber: currentStudent.seatNumber,
                 studentName: currentStudent.name,
                 level: currentStudent.level,
-                preferences: preferences
+                preferences: preferencesPayload
             };
 
             try {
@@ -233,35 +260,18 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                alert('志願提交成功！已寫入 Google Sheet。');
+                alert('志願提交/更新成功！已覆蓋更新至 Excel 試算表。');
+                
+                // 本地更新紀錄，方便不刷新即可再次點選
+                const studentKey = `${currentStudent.className}_${currentStudent.seatNumber}`;
+                if (!existingRecords[studentKey]) existingRecords[studentKey] = {};
+                currentFilteredClubs.forEach(c => {
+                    existingRecords[studentKey][c.name] = c.rank;
+                });
+
             } catch (e) {
                 alert('提交失敗：' + e);
             }
-        }
-
-        function exportCSV() {
-            if (!currentStudent) return;
-            const preferences = getPreferences();
-
-            let csv = "\uFEFF班級,座號,姓名,學制分組,志願序號,社團內容\n";
-            preferences.forEach(p => {
-                csv += `"${currentStudent.className}","${currentStudent.seatNumber}","${currentStudent.name}","${currentStudent.level}","${p}"\n`;
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `${currentStudent.className}_${currentStudent.seatNumber}_${currentStudent.name}_115-1社團志願.csv`;
-            link.click();
-        }
-
-        function getPreferences() {
-            const items = document.querySelectorAll('#clubList li');
-            let prefs = [];
-            items.forEach((item, index) => {
-                prefs.push(`志願${index + 1}: [${item.getAttribute('data-id')}] ${item.getAttribute('data-name')}`);
-            });
-            return prefs;
         }
     </script>
 </body>
