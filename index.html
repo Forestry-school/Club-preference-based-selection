@@ -71,22 +71,21 @@
         .student-card:hover { border-color: var(--primary); background: #FFF; }
         .student-card:active { transform: scale(0.97); }
 
-        /* 社團列與內部元件極致化寬度調整 */
+        /* 社團卡片包覆區：採用縱向疊加設計，確保名稱與老師完整呈現 */
         .club-row {
             background: #FFF; border: 1.5px solid #E2E8DC; border-left: 5px solid #D1DBC8;
-            border-radius: 12px; padding: 8px 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px;
+            border-radius: 12px; padding: 10px 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px;
         }
         .club-row.rank-1 { border-left-color: #D98E2B; }
         .club-row.rank-2 { border-left-color: #4B6339; }
         .club-row.rank-3 { border-left-color: #5B82A6; }
 
-        /* 下拉選單瘦身 */
+        /* 下拉選單與按鈕適度縮放 */
         .rank-select {
             background: #FFF; border: 1.5px solid var(--accent); color: #A8631C;
-            font-weight: 800; font-size: 13px; border-radius: 8px; padding: 4px 4px;
+            font-weight: 800; font-size: 12px; border-radius: 8px; padding: 4px 2px;
             flex-shrink: 0;
         }
-        /* 簡介按鈕精簡 */
         .info-chip {
             background: var(--accent); color: #FFF; font-weight: 700; font-size: 11px;
             padding: 5px 8px; border-radius: 6px; transition: .2s; flex-shrink: 0;
@@ -109,20 +108,15 @@
         }
     </style>
 </head>
-<body class="py-3 px-1.5 sm:py-6 sm:px-4">
-    <!-- 手機端取消內縮，最大化滿版顯示 -->
+<body class="py-3 px-1 sm:py-6 sm:px-4">
     <div class="max-w-xl mx-auto bg-white rounded-2xl sm:rounded-3xl shadow-xl p-3 sm:p-7">
         
         <!-- 頂部 Banner -->
         <div class="banner-header">
-            <!-- 學校 Logo 圖片（圖片內已包含校名與英文） -->
             <img id="schoolLogo" src="logo.png" alt="福瑞斯特中小學" class="mx-auto h-12 sm:h-16 mb-1 object-contain" onerror="this.onerror=null; this.outerHTML='<h1 class=\'text-lg sm:text-2xl font-black text-[#0f4c28] mb-1\'>🌲 福瑞斯特中小學</h1>';">
-            
-            <!-- 學年度與選社標題 -->
             <div class="text-base sm:text-xl font-black text-[#1b4332] mt-1">115學年度 第一學期</div>
             <div class="text-xs sm:text-sm font-bold text-[#2d6a4f] mt-0.5">線上選社志願序</div>
 
-            <!-- 時間與倒數計時卡片 -->
             <div class="countdown-card">
                 <div id="timeStatusText" class="text-[11px] sm:text-xs font-bold text-[#f59e0b] mb-0.5">⏰ 報名時間計算中...</div>
                 <div id="countdownTimer" class="text-xs sm:text-base font-mono font-bold tracking-wider text-white">--天 --時 --分 --秒</div>
@@ -193,7 +187,7 @@
             <!-- 一般學生填寫區 -->
             <div id="normalClubArea">
                 <p class="text-[11px] sm:text-xs text-slate-500 mb-2 text-center">💡 選擇志願序號（數字 1 為第一志願），點擊 ℹ️ 查看簡介</p>
-                <div id="clubList" class="space-y-2 mb-5"></div>
+                <div id="clubList" class="space-y-2.5 mb-5"></div>
                 <button id="submitBtn" onclick="submitData()" class="w-full btn-submit">
                     提交 / 更新志願
                 </button>
@@ -427,6 +421,7 @@
             }
         }
 
+        /* 關鍵修正：將社團名稱與老師分成兩行顯示，提供最大顯示空間 */
         function renderClubs() {
             const clubListEl = document.getElementById('clubList');
             clubListEl.innerHTML = '';
@@ -444,7 +439,7 @@
                 const rankClass = club.rank === 1 ? 'rank-1' : club.rank === 2 ? 'rank-2' : club.rank === 3 ? 'rank-3' : '';
                 item.className = `club-row ${rankClass}`;
 
-                const teacherText = club.teacher ? `指導：${club.teacher}` : '';
+                const teacherText = club.teacher ? `指導老師：${club.teacher}` : '';
 
                 let optionsHtml = '';
                 for (let i = 1; i <= totalClubs; i++) {
@@ -456,9 +451,11 @@
                     <select onchange="changeRank('${club.id}', this.value)" class="rank-select" ${!isSystemOpen ? 'disabled' : ''}>
                         ${optionsHtml}
                     </select>
-                    <div class="flex-1 min-w-0 px-1">
-                        <div class="font-bold text-slate-800 text-xs sm:text-sm truncate">[${club.id}] ${club.name}</div>
-                        ${teacherText ? `<div class="text-[10px] sm:text-xs text-slate-400 truncate">${teacherText}</div>` : ''}
+                    <div class="flex-1 min-w-0 px-1.5 flex flex-col justify-center">
+                        <div class="font-black text-slate-800 text-sm sm:text-base leading-snug break-words">
+                            [${club.id}] ${club.name}
+                        </div>
+                        ${teacherText ? `<div class="text-[11px] sm:text-xs text-slate-500 font-medium mt-0.5 break-words">${teacherText}</div>` : ''}
                     </div>
                     <button onclick="showModal('${club.name}', '${club.teacher}', \`${club.desc}\`)" class="info-chip">
                         ℹ️ 簡介
