@@ -24,7 +24,7 @@
             border: 1.5px solid #D3E0CE;
             border-radius: 20px;
             color: var(--text-main);
-            padding: 20px 16px;
+            padding: 16px 12px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(61,83,43,0.05);
         }
@@ -32,32 +32,32 @@
         .countdown-card {
             background: #2B2B2B;
             color: #FFF;
-            border-radius: 16px;
-            padding: 10px 16px;
+            border-radius: 14px;
+            padding: 8px 12px;
             text-align: center;
-            margin-top: 12px;
+            margin-top: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
         .trail-container {
             display: flex; flex-direction: row; align-items: center; justify-content: center;
-            gap: 12px; margin: 20px 0;
+            gap: 8px; margin: 16px 0;
         }
-        .trail-step { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .trail-step { display: flex; flex-direction: column; align-items: center; gap: 2px; }
         .trail-dot {
-            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 14px; border: 2px solid #C2D1B7; background: #FFF; color: var(--text-sub); font-weight: 700; transition: .2s ease;
+            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 13px; border: 2px solid #C2D1B7; background: #FFF; color: var(--text-sub); font-weight: 700; transition: .2s ease;
         }
         .trail-dot.active { background: var(--primary); border-color: var(--primary); color: #FFF; }
         .trail-dot.done { background: #8CA07B; border-color: #8CA07B; color: #FFF; }
-        .trail-label { font-size: 13px; color: var(--text-sub); font-weight: 700; }
+        .trail-label { font-size: 12px; color: var(--text-sub); font-weight: 700; }
         .trail-label.active { color: var(--primary); }
-        .trail-line { flex: 1; max-width: 48px; height: 3px; background: #C2D1B7; border-radius: 2px; margin-bottom: 20px; }
+        .trail-line { flex: 1; max-width: 36px; height: 3px; background: #C2D1B7; border-radius: 2px; margin-bottom: 18px; }
         .trail-line.done { background: #8CA07B; }
 
         .class-btn {
             background: var(--primary); color: white; border-radius: 16px;
-            padding: 22px 10px; font-size: 1.4rem; font-weight: 800;
+            padding: 20px 10px; font-size: 1.3rem; font-weight: 800;
             box-shadow: 0 4px 12px rgba(75,99,57,0.2); transition: .15s ease;
         }
         .class-btn:hover { background: var(--primary-dark); }
@@ -65,62 +65,67 @@
 
         .student-card {
             background: #FBF9F1; border: 2px solid #E5DEC9;
-            border-radius: 16px; padding: 18px 10px; text-align: center;
+            border-radius: 16px; padding: 16px 8px; text-align: center;
             cursor: pointer; transition: .15s ease;
         }
         .student-card:hover { border-color: var(--primary); background: #FFF; }
         .student-card:active { transform: scale(0.97); }
 
+        /* 社團列與內部元件極致化寬度調整 */
         .club-row {
-            background: #FFF; border: 1.5px solid #E2E8DC; border-left: 6px solid #D1DBC8;
-            border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            background: #FFF; border: 1.5px solid #E2E8DC; border-left: 5px solid #D1DBC8;
+            border-radius: 12px; padding: 8px 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px;
         }
         .club-row.rank-1 { border-left-color: #D98E2B; }
         .club-row.rank-2 { border-left-color: #4B6339; }
         .club-row.rank-3 { border-left-color: #5B82A6; }
 
+        /* 下拉選單瘦身 */
         .rank-select {
             background: #FFF; border: 1.5px solid var(--accent); color: #A8631C;
-            font-weight: 800; font-size: 14px; border-radius: 10px; padding: 6px 8px;
+            font-weight: 800; font-size: 13px; border-radius: 8px; padding: 4px 4px;
+            flex-shrink: 0;
         }
+        /* 簡介按鈕精簡 */
         .info-chip {
-            background: var(--accent); color: #FFF; font-weight: 700; font-size: 12px;
-            padding: 6px 12px; border-radius: 8px; transition: .2s;
+            background: var(--accent); color: #FFF; font-weight: 700; font-size: 11px;
+            padding: 5px 8px; border-radius: 6px; transition: .2s; flex-shrink: 0;
         }
         .info-chip:hover { background: #B3711E; }
 
         .btn-submit {
             background: var(--primary); color: white; font-weight: 900; font-size: 1.1rem;
-            padding: 16px; border-radius: 16px; box-shadow: 0 4px 14px rgba(75,99,57,0.25);
+            padding: 14px; border-radius: 16px; box-shadow: 0 4px 14px rgba(75,99,57,0.25);
         }
         .btn-submit:hover { background: var(--primary-dark); }
         .btn-submit:disabled { background: #94A3B8; box-shadow: none; cursor: not-allowed; }
 
-        .status-box { border: 2px dashed #C2D1B7; border-radius: 14px; padding: 24px; text-align: center; color: var(--text-sub); }
+        .status-box { border: 2px dashed #C2D1B7; border-radius: 14px; padding: 20px; text-align: center; color: var(--text-sub); }
         .status-box.error { border-color: #E2A082; background: #FDF4F0; color: #B04A22; }
 
         .fixed-club-card {
             background: #FEF8EC; border: 2px solid #E6A13B;
-            border-radius: 16px; padding: 24px 16px; text-align: center;
+            border-radius: 16px; padding: 20px 14px; text-align: center;
         }
     </style>
 </head>
-<body class="py-6 px-4">
-    <div class="max-w-xl mx-auto bg-white rounded-3xl shadow-xl p-5 sm:p-7">
+<body class="py-3 px-1.5 sm:py-6 sm:px-4">
+    <!-- 手機端取消內縮，最大化滿版顯示 -->
+    <div class="max-w-xl mx-auto bg-white rounded-2xl sm:rounded-3xl shadow-xl p-3 sm:p-7">
         
         <!-- 頂部 Banner -->
         <div class="banner-header">
             <!-- 學校 Logo 圖片（圖片內已包含校名與英文） -->
-            <img id="schoolLogo" src="logo.png" alt="福瑞斯特中小學" class="mx-auto h-16 mb-2 object-contain" onerror="this.onerror=null; this.outerHTML='<h1 class=\'text-xl sm:text-2xl font-black text-[#0f4c28] mb-1\'>🌲 福瑞斯特中小學</h1>';">
+            <img id="schoolLogo" src="logo.png" alt="福瑞斯特中小學" class="mx-auto h-12 sm:h-16 mb-1 object-contain" onerror="this.onerror=null; this.outerHTML='<h1 class=\'text-lg sm:text-2xl font-black text-[#0f4c28] mb-1\'>🌲 福瑞斯特中小學</h1>';">
             
             <!-- 學年度與選社標題 -->
-            <div class="text-lg sm:text-xl font-black text-[#1b4332] mt-1">115學年度 第一學期</div>
+            <div class="text-base sm:text-xl font-black text-[#1b4332] mt-1">115學年度 第一學期</div>
             <div class="text-xs sm:text-sm font-bold text-[#2d6a4f] mt-0.5">線上選社志願序</div>
 
             <!-- 時間與倒數計時卡片 -->
             <div class="countdown-card">
-                <div id="timeStatusText" class="text-xs font-bold text-[#f59e0b] mb-0.5">⏰ 報名時間計算中...</div>
-                <div id="countdownTimer" class="text-sm sm:text-base font-mono font-bold tracking-wider text-white">--天 --時 --分 --秒</div>
+                <div id="timeStatusText" class="text-[11px] sm:text-xs font-bold text-[#f59e0b] mb-0.5">⏰ 報名時間計算中...</div>
+                <div id="countdownTimer" class="text-xs sm:text-base font-mono font-bold tracking-wider text-white">--天 --時 --分 --秒</div>
             </div>
         </div>
 
@@ -144,41 +149,41 @@
 
         <!-- 步驟 1：選擇班級 -->
         <div id="stepClass">
-            <h3 class="font-black text-center text-base mb-4 text-slate-700">請選擇班級</h3>
-            <div id="classGrid" class="grid grid-cols-2 gap-4">
+            <h3 class="font-black text-center text-sm sm:text-base mb-3 text-slate-700">請選擇班級</h3>
+            <div id="classGrid" class="grid grid-cols-2 gap-3 sm:gap-4">
                 <div class="status-box col-span-2">📡 資料載入中，請稍候…</div>
             </div>
         </div>
 
         <!-- 步驟 2：選擇學生卡片 -->
         <div id="stepStudent" class="hidden">
-            <div class="flex justify-between items-center mb-4">
-                <button onclick="backToClassStep()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-3 py-1.5 rounded-lg border border-slate-300 transition flex items-center gap-1">
-                    ⬅️ 上一步 (選班級)
+            <div class="flex justify-between items-center mb-3">
+                <button onclick="backToClassStep()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-2.5 py-1 rounded-lg border border-slate-300 transition flex items-center gap-1">
+                    ⬅️ 上一步
                 </button>
-                <h3 id="selectedClassTitle" class="font-black text-base text-slate-700"></h3>
-                <div class="w-12"></div>
+                <h3 id="selectedClassTitle" class="font-black text-sm sm:text-base text-slate-700"></h3>
+                <div class="w-10"></div>
             </div>
-            <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
+            <div id="studentGrid" class="grid grid-cols-2 gap-3 sm:gap-4"></div>
         </div>
 
         <!-- 步驟 3：社團選擇區 -->
         <div id="stepClub" class="hidden">
-            <div class="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 mb-4">
+            <div class="bg-emerald-50/60 border border-emerald-100 rounded-xl p-3 mb-3">
                 <div class="flex justify-between items-center mb-1">
-                    <span id="studentInfo" class="font-bold text-lg text-emerald-950"></span>
-                    <button onclick="restartProcess()" class="text-xs bg-white border border-emerald-200 text-emerald-800 font-bold px-3 py-1 rounded-lg hover:bg-emerald-100 transition">重新選擇</button>
+                    <span id="studentInfo" class="font-bold text-base sm:text-lg text-emerald-950"></span>
+                    <button onclick="restartProcess()" class="text-xs bg-white border border-emerald-200 text-emerald-800 font-bold px-2 py-0.5 rounded-lg hover:bg-emerald-100 transition">重新選擇</button>
                 </div>
-                <span id="levelBadge" class="inline-block bg-emerald-700 text-white font-bold text-xs px-3 py-0.5 rounded-full"></span>
+                <span id="levelBadge" class="inline-block bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-0.5 rounded-full"></span>
             </div>
 
             <!-- 校隊鎖定區 -->
             <div id="fixedClubNotice" class="hidden mb-6">
                 <div class="fixed-club-card">
-                    <div class="text-4xl mb-2">🏆</div>
-                    <h4 class="font-black text-amber-900 text-lg mb-1">您已由學校指定為校隊成員</h4>
-                    <p class="text-amber-800 font-black text-2xl my-3" id="fixedClubName"></p>
-                    <p class="text-xs text-amber-700 mt-2 mb-4">📌 校隊成員免填其他志願，請點擊下方按鈕確認送出紀錄。</p>
+                    <div class="text-3xl mb-1">🏆</div>
+                    <h4 class="font-black text-amber-900 text-base mb-1">您已由學校指定為校隊成員</h4>
+                    <p class="text-amber-800 font-black text-xl my-2" id="fixedClubName"></p>
+                    <p class="text-xs text-amber-700 mt-1 mb-3">📌 校隊成員免填其他志願，請點擊下方按鈕確認送出紀錄。</p>
                     <button id="fixedSubmitBtn" onclick="submitData()" class="w-full btn-submit bg-amber-600 hover:bg-amber-700 text-white">
                         確認校隊名額並送出
                     </button>
@@ -187,25 +192,25 @@
 
             <!-- 一般學生填寫區 -->
             <div id="normalClubArea">
-                <p class="text-xs text-slate-500 mb-3 text-center">💡 請為每個社團選擇志願序號（數字 1 為第一志願），點擊 ℹ️ 可查看簡介</p>
-                <div id="clubList" class="space-y-3 mb-6"></div>
+                <p class="text-[11px] sm:text-xs text-slate-500 mb-2 text-center">💡 選擇志願序號（數字 1 為第一志願），點擊 ℹ️ 查看簡介</p>
+                <div id="clubList" class="space-y-2 mb-5"></div>
                 <button id="submitBtn" onclick="submitData()" class="w-full btn-submit">
                     提交 / 更新志願
                 </button>
             </div>
         </div>
 
-        <footer class="text-center text-slate-400 text-xs mt-8 font-medium">製作人：TATA</footer>
+        <footer class="text-center text-slate-400 text-xs mt-6 font-medium">製作人：TATA</footer>
     </div>
 
     <!-- 簡介彈出視窗 -->
     <div id="descModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-            <h3 id="modalTitle" class="text-xl font-bold mb-1 text-slate-800"></h3>
-            <div id="modalTeacher" class="text-xs font-bold text-emerald-700 mb-3"></div>
-            <p id="modalDesc" class="text-sm leading-relaxed mb-6 text-slate-600 whitespace-pre-line"></p>
-            <button onclick="closeModal()" class="w-full bg-emerald-800 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-900 transition">
-                了解，關閉視窗
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl">
+            <h3 id="modalTitle" class="text-lg sm:text-xl font-bold mb-1 text-slate-800"></h3>
+            <div id="modalTeacher" class="text-xs font-bold text-emerald-700 mb-2"></div>
+            <p id="modalDesc" class="text-xs sm:text-sm leading-relaxed mb-5 text-slate-600 whitespace-pre-line"></p>
+            <button onclick="closeModal()" class="w-full bg-emerald-800 text-white font-bold py-2 rounded-xl hover:bg-emerald-900 transition text-sm">
+                關閉視窗
             </button>
         </div>
     </div>
@@ -242,7 +247,6 @@
                 if (data.startTime) startTime = new Date(data.startTime.replace(/-/g, "/"));
                 if (data.endTime) endTime = new Date(data.endTime.replace(/-/g, "/"));
 
-                // 啟動倒數計時器
                 startTimer();
 
                 if (allStudents.length === 0) {
@@ -257,7 +261,6 @@
             }
         }
 
-        // ⏱️ 倒數計時與時間控制機制
         function startTimer() {
             if (timerInterval) clearInterval(timerInterval);
 
@@ -268,7 +271,6 @@
                 const submitBtn = document.getElementById('submitBtn');
                 const fixedSubmitBtn = document.getElementById('fixedSubmitBtn');
 
-                // 未設定時間時預設開啟
                 if (!startTime && !endTime) {
                     statusText.innerText = "📢 報名狀態";
                     countdownTimer.innerText = "開放中";
@@ -380,8 +382,8 @@
                 
                 const fixedBadge = s.fixedClub ? `<span class="inline-block bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded mt-1">校隊成員</span>` : '';
                 card.innerHTML = `
-                    <div class="text-slate-400 font-medium text-sm mb-0.5">${s.seatNumber}號</div>
-                    <div class="text-slate-800 font-bold text-2xl">${s.name}</div>
+                    <div class="text-slate-400 font-medium text-xs mb-0.5">${s.seatNumber}號</div>
+                    <div class="text-slate-800 font-bold text-xl sm:text-2xl">${s.name}</div>
                     ${fixedBadge}
                 `;
                 studentGrid.appendChild(card);
@@ -442,9 +444,7 @@
                 const rankClass = club.rank === 1 ? 'rank-1' : club.rank === 2 ? 'rank-2' : club.rank === 3 ? 'rank-3' : '';
                 item.className = `club-row ${rankClass}`;
 
-                const teacherText = club.teacher ? `指導老師：${club.teacher}` : '';
-                const descText = club.desc ? club.desc : '點擊查看詳情';
-                const subText = teacherText ? `${teacherText} | ${descText}` : descText;
+                const teacherText = club.teacher ? `指導：${club.teacher}` : '';
 
                 let optionsHtml = '';
                 for (let i = 1; i <= totalClubs; i++) {
@@ -453,16 +453,14 @@
                 }
 
                 item.innerHTML = `
-                    <div class="flex items-center space-x-2 overflow-hidden flex-1">
-                        <select onchange="changeRank('${club.id}', this.value)" class="rank-select" ${!isSystemOpen ? 'disabled' : ''}>
-                            ${optionsHtml}
-                        </select>
-                        <div class="truncate">
-                            <span class="font-bold text-slate-800 text-sm sm:text-base">[${club.id}] ${club.name}</span>
-                            <p class="text-xs text-slate-500 truncate">${subText}</p>
-                        </div>
+                    <select onchange="changeRank('${club.id}', this.value)" class="rank-select" ${!isSystemOpen ? 'disabled' : ''}>
+                        ${optionsHtml}
+                    </select>
+                    <div class="flex-1 min-w-0 px-1">
+                        <div class="font-bold text-slate-800 text-xs sm:text-sm truncate">[${club.id}] ${club.name}</div>
+                        ${teacherText ? `<div class="text-[10px] sm:text-xs text-slate-400 truncate">${teacherText}</div>` : ''}
                     </div>
-                    <button onclick="showModal('${club.name}', '${club.teacher}', \`${club.desc}\`)" class="info-chip flex-shrink-0">
+                    <button onclick="showModal('${club.name}', '${club.teacher}', \`${club.desc}\`)" class="info-chip">
                         ℹ️ 簡介
                     </button>
                 `;
