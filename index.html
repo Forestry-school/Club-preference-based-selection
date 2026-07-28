@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>學生社團志願選填系統</title>
+    <title>115學年度 第一學期 線上選社志願序</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
@@ -13,11 +13,20 @@
 </head>
 <body class="bg-slate-100 min-h-screen py-6 px-4">
     <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-6">
-        <h1 class="text-xl font-bold text-center text-slate-800 mb-6">學生社團志願選填系統</h1>
+        
+        <!-- 頂部 Logo 與標頭區 -->
+        <div class="text-center mb-6">
+            <!-- 直接讀取同目錄下的 logo.png -->
+            <img id="schoolLogo" src="logo.png" alt="學校Logo" class="mx-auto h-20 mb-3 object-contain">
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-800">115學年度 第一學期</h1>
+            <h2 class="text-lg font-semibold text-slate-600 mt-1">線上選社志願序</h2>
+        </div>
+
+        <hr class="border-slate-200 mb-6">
 
         <!-- 步驟 1：選擇班級 -->
         <div id="stepClass">
-            <h2 class="text-base font-semibold text-slate-700 mb-4 text-center">請選擇班級</h2>
+            <h3 class="text-base font-semibold text-slate-700 mb-4 text-center">請選擇班級</h3>
             <div id="classGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
 
@@ -25,7 +34,7 @@
         <div id="stepStudent" class="hidden">
             <div class="flex justify-between items-center mb-4">
                 <button onclick="goBackToClass()" class="text-sm text-blue-600 underline">← 重選班級</button>
-                <h2 id="selectedClassTitle" class="text-base font-semibold text-slate-700"></h2>
+                <h3 id="selectedClassTitle" class="text-base font-semibold text-slate-700"></h3>
                 <div></div>
             </div>
             <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
@@ -68,7 +77,6 @@
     </div>
 
     <script>
-        // ⚠️ 請在此處貼上您的 Google Apps Script Web App URL
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwysSOartamBcSLu63YM0ZDVBHF9SU4ZhjA3yCYXK302LTvAtgRLqh4xEiP0yhHcxZxHg/exec";
 
         let allStudents = [];
@@ -76,20 +84,17 @@
         let currentStudent = null;
         let sortableInstance = null;
 
-        // 初始化：從 Google Sheet 取得學生與社團資料
         window.onload = async () => {
-            if (GAS_URL && GAS_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+            if (GAS_URL) {
                 try {
                     const res = await fetch(GAS_URL);
                     const data = await res.json();
-                    allStudents = data.students;
-                    allClubs = data.clubs;
+                    allStudents = data.students || [];
+                    allClubs = data.clubs || [];
                     renderClasses();
                 } catch (e) {
-                    alert('資料載入失敗，請檢查 Google Apps Script 網址或網路狀況。');
+                    alert('資料載入失敗，請檢查 Google Apps Script 設定或網路狀態。');
                 }
-            } else {
-                alert('請先在 index.html 填入您的 Google Apps Script URL！');
             }
         };
 
@@ -98,6 +103,11 @@
             const classes = [...new Set(allStudents.map(s => s.className))];
             
             classGrid.innerHTML = '';
+            if(classes.length === 0) {
+                classGrid.innerHTML = '<p class="col-span-2 text-center text-slate-400 py-4">讀取中或尚未有學生資料...</p>';
+                return;
+            }
+
             classes.forEach(c => {
                 const btn = document.createElement('button');
                 btn.className = "class-btn py-5 rounded-2xl text-2xl font-bold shadow-md transition active:scale-95";
@@ -153,7 +163,6 @@
                 li.setAttribute('data-id', club.id);
                 li.setAttribute('data-name', club.name);
                 
-                // 簡短顯示前 15 個字
                 const shortDesc = club.desc ? (club.desc.length > 15 ? club.desc.substring(0, 15) + "..." : club.desc) : "點擊查看詳情";
 
                 li.innerHTML = `
@@ -185,7 +194,6 @@
             });
         }
 
-        // 顯示社團詳細簡介
         function showModal(title, desc) {
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalDesc').innerText = desc || "暫無詳細簡介。";
@@ -243,7 +251,7 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `${currentStudent.className}_${currentStudent.seatNumber}_${currentStudent.name}_社團志願.csv`;
+            link.download = `${currentStudent.className}_${currentStudent.seatNumber}_${currentStudent.name}_115-1社團志願.csv`;
             link.click();
         }
 
