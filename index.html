@@ -5,64 +5,267 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>115學年度 第一學期 線上選社志願序</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Iansui&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        .class-btn { background-color: #4d7c0f; color: white; }
-        .class-btn:hover { background-color: #3f6212; }
+        :root{
+            --pine:#2E4A3D;
+            --pine-dark:#1F352B;
+            --moss:#6B8F5A;
+            --moss-light:#E4EEDB;
+            --amber:#E7A33E;
+            --amber-dark:#C97F1F;
+            --bark:#8A6240;
+            --bark-dark:#6B4A2E;
+            --paper:#F3ECDD;
+            --card:#FFFDF8;
+            --ink:#24312A;
+            --ink-soft:#6B7A6C;
+            --line:#E4D9C2;
+        }
+        *{ font-family:"Noto Sans TC", sans-serif; }
+        .font-display{ font-family:"Iansui","Noto Sans TC",sans-serif; letter-spacing:.02em; }
+
+        body{
+            background-color: var(--paper);
+            background-image:
+                radial-gradient(circle at 8% 10%, rgba(107,143,90,.16), transparent 40%),
+                radial-gradient(circle at 95% 18%, rgba(231,163,62,.14), transparent 38%),
+                radial-gradient(circle at 15% 92%, rgba(138,98,64,.12), transparent 42%);
+            background-attachment: fixed;
+            color: var(--ink);
+        }
+
+        .site-card{
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 26px;
+            box-shadow: 0 18px 40px -20px rgba(46,74,61,.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .site-card::before{
+            content:"";
+            position:absolute; top:0; left:0; right:0; height:6px;
+            background: linear-gradient(90deg, var(--moss), var(--amber), var(--pine));
+        }
+
+        /* header */
+        .header-board{
+            background: linear-gradient(160deg, var(--bark), var(--bark-dark));
+            border-radius: 20px;
+            padding: 22px 20px 20px;
+            position: relative;
+            box-shadow: inset 0 2px 6px rgba(255,255,255,.15), inset 0 -6px 14px rgba(0,0,0,.25);
+        }
+        .header-board h1, .header-board h2{ color:#FBF3E1; }
+        .header-board .sub{ color:#E7D8BC; }
+        .leaf-badge{
+            position:absolute; width:34px; height:34px;
+        }
+        .leaf-badge svg{ width:100%; height:100%; }
+
+        /* trail step indicator */
+        .trail{ display:flex; align-items:center; justify-content:center; gap:6px; margin: 22px 0 26px; }
+        .trail-step{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+        .trail-dot{
+            width:38px; height:38px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            font-size:16px; border:2px solid var(--line); background:#fff;
+            color: var(--ink-soft); font-weight:700; transition:.2s ease;
+        }
+        .trail-dot.active{ background: var(--pine); border-color: var(--pine); color:#fff; box-shadow:0 6px 14px -6px rgba(46,74,61,.6); }
+        .trail-dot.done{ background: var(--moss); border-color: var(--moss); color:#fff; }
+        .trail-label{ font-size:11.5px; color:var(--ink-soft); font-weight:700; }
+        .trail-label.active{ color:var(--pine); }
+        .trail-line{ width:34px; height:2px; background:var(--line); border-radius:2px; margin-bottom:22px; }
+        .trail-line.done{ background: var(--moss); }
+
+        h3.section-title{
+            font-weight:900; color:var(--pine); text-align:center;
+        }
+
+        /* class signpost buttons */
+        .class-btn{
+            background: linear-gradient(160deg, var(--pine), var(--pine-dark));
+            color: #FBF3E1;
+            border-radius: 18px;
+            padding: 20px 10px;
+            font-size: 1.4rem;
+            font-weight: 900;
+            box-shadow: 0 10px 22px -12px rgba(31,53,43,.55), inset 0 1px 0 rgba(255,255,255,.15);
+            display:flex; align-items:center; justify-content:center; gap:8px;
+            transition:.15s ease;
+            border: none;
+        }
+        .class-btn:hover{ transform: translateY(-2px); box-shadow: 0 14px 26px -12px rgba(31,53,43,.6); }
+        .class-btn:active{ transform: scale(.97); }
+        .class-btn::before{ content:"🌲"; font-size:1.1rem; }
+
+        /* student name-tag cards */
+        .student-card{
+            background: var(--card);
+            border: 2px dashed var(--line);
+            border-radius: 18px;
+            padding: 18px 12px 16px;
+            text-align:center;
+            cursor:pointer;
+            position: relative;
+            transition:.15s ease;
+        }
+        .student-card:hover{ border-color: var(--amber); background: #FFFBF2; }
+        .student-card:active{ transform: scale(.97); }
+        .student-card::before{
+            content:""; position:absolute; top:8px; left:50%; transform:translateX(-50%);
+            width:10px; height:10px; border-radius:50%; background: var(--paper); border:1px solid var(--line);
+        }
+        .seat-badge{
+            display:inline-flex; align-items:center; justify-content:center;
+            width:30px; height:30px; border-radius:50%;
+            background: var(--moss-light); color: var(--moss); font-weight:900; font-size:12.5px;
+            margin-bottom:6px;
+        }
+        .student-name{ color: var(--pine); font-weight:900; font-size:1.4rem; }
+
+        /* club selection panel */
+        .info-banner{
+            background: var(--moss-light);
+            border: 1px solid #CEDFC0;
+            border-radius: 16px;
+            padding: 14px 16px;
+        }
+        .level-badge{
+            display:inline-block; background: var(--amber); color:#fff;
+            font-weight:800; font-size:11.5px; padding:3px 10px; border-radius:999px;
+        }
+        .btn-ghost{
+            background:#fff; border:1px solid var(--line); color: var(--ink-soft);
+            font-size:12px; font-weight:700; padding:6px 10px; border-radius:10px;
+        }
+        .btn-ghost:hover{ background: var(--paper); }
+
+        .club-row{
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-left: 5px solid var(--line);
+            border-radius: 14px;
+            padding: 10px 12px;
+            display:flex; align-items:center; justify-content:space-between; gap:10px;
+        }
+        .club-row.rank-1{ border-left-color: var(--amber); background: linear-gradient(90deg, #FFF7E8, var(--card) 30%); }
+        .club-row.rank-2{ border-left-color: var(--moss); }
+        .club-row.rank-3{ border-left-color: #A9C9EB; }
+
+        .rank-select{
+            background:#fff; border:1.5px solid var(--amber); color: var(--amber-dark);
+            font-weight:800; font-size:13px; border-radius:10px; padding:8px 8px;
+        }
+        .rank-select:focus{ outline:2px solid var(--amber); outline-offset:1px; }
+
+        .club-name{ color: var(--pine); font-weight:800; }
+        .club-desc{ color: var(--ink-soft); }
+
+        .info-chip{
+            background: var(--amber); color:#fff; font-weight:700; font-size:11.5px;
+            padding: 6px 10px; border-radius:10px; white-space:nowrap;
+        }
+        .info-chip:hover{ background: var(--amber-dark); }
+
+        .btn-submit{
+            background: linear-gradient(160deg, var(--moss), var(--pine));
+            color:#fff; font-weight:900; font-size:1.1rem;
+            padding: 15px; border-radius:18px;
+            box-shadow: 0 14px 26px -14px rgba(46,74,61,.6);
+        }
+        .btn-submit:active{ transform: scale(.98); }
+
+        /* modal */
+        #descModal .modal-card{
+            background: var(--card); border-radius: 22px; border:1px solid var(--line);
+            position:relative; overflow:hidden;
+        }
+        #descModal .modal-card::before{
+            content:""; position:absolute; top:0; left:0; right:0; height:6px;
+            background: linear-gradient(90deg, var(--amber), var(--moss));
+        }
+        #modalTitle{ color: var(--pine); }
+        .btn-close{
+            background: var(--pine); color:#fff; font-weight:800;
+        }
+        .btn-close:hover{ background: var(--pine-dark); }
+
+        @media (prefers-reduced-motion: reduce){ .class-btn, .student-card{ transition:none; } }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen py-6 px-4">
-    <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-6">
-        
+<body class="min-h-screen py-6 px-4">
+    <div class="max-w-2xl mx-auto site-card p-6">
+
         <!-- 頂部 Logo 與標頭區 -->
-        <div class="text-center mb-6">
-            <img id="schoolLogo" src="logo.png" alt="學校Logo" class="mx-auto h-20 mb-3 object-contain">
-            <h1 class="text-xl sm:text-2xl font-bold text-slate-800">115學年度 第一學期</h1>
-            <h2 class="text-lg font-semibold text-slate-600 mt-1">線上選社志願序</h2>
+        <div class="header-board text-center mb-2">
+            <img id="schoolLogo" src="logo.png" alt="學校Logo" class="mx-auto h-16 mb-2 object-contain">
+            <h1 class="font-display text-xl sm:text-2xl font-bold">115學年度 第一學期</h1>
+            <h2 class="font-display text-lg font-semibold mt-1">線上選社志願序</h2>
+            <p class="sub text-xs mt-1">選班級 → 選同學 → 排志願，三步驟完成登記</p>
         </div>
 
-        <hr class="border-slate-200 mb-6">
+        <!-- 步驟軌跡 -->
+        <div class="trail" id="trail">
+            <div class="trail-step">
+                <div class="trail-dot active" id="dotClass">🪧</div>
+                <span class="trail-label active" id="labelClass">選班級</span>
+            </div>
+            <div class="trail-line" id="lineOne"></div>
+            <div class="trail-step">
+                <div class="trail-dot" id="dotStudent">🧒</div>
+                <span class="trail-label" id="labelStudent">選同學</span>
+            </div>
+            <div class="trail-line" id="lineTwo"></div>
+            <div class="trail-step">
+                <div class="trail-dot" id="dotClub">🍃</div>
+                <span class="trail-label" id="labelClub">排志願</span>
+            </div>
+        </div>
 
         <!-- 步驟 1：選擇班級 -->
         <div id="stepClass">
-            <h3 class="text-base font-semibold text-slate-700 mb-4 text-center">請選擇班級</h3>
+            <h3 class="section-title text-base mb-4">請選擇班級</h3>
             <div id="classGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
 
         <!-- 步驟 2：選擇學生卡片 -->
         <div id="stepStudent" class="hidden">
             <div class="text-center mb-4">
-                <h3 id="selectedClassTitle" class="text-base font-semibold text-slate-700"></h3>
+                <h3 id="selectedClassTitle" class="section-title text-base"></h3>
             </div>
             <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
 
         <!-- 步驟 3：社團選擇區 -->
         <div id="stepClub" class="hidden">
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
+            <div class="info-banner mb-4">
                 <div class="flex justify-between items-center mb-1">
-                    <span id="studentInfo" class="font-bold text-blue-900 text-lg"></span>
-                    <!-- 僅保留「重新選擇」，避免隨意切換 -->
-                    <button onclick="restartProcess()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded transition">重新選擇</button>
+                    <span id="studentInfo" class="font-bold text-lg" style="color:var(--pine)"></span>
+                    <button onclick="restartProcess()" class="btn-ghost">重新選擇</button>
                 </div>
-                <span id="levelBadge" class="inline-block bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded-full font-semibold"></span>
+                <span id="levelBadge" class="level-badge"></span>
             </div>
 
-            <p class="text-xs text-slate-500 mb-3 text-center">💡 請為每個社團選擇志願序號（數字 1 為第一志願），點擊 ℹ️ 可查看簡介</p>
+            <p class="text-xs mb-3 text-center" style="color:var(--ink-soft)">💡 請為每個社團選擇志願序號（數字 1 為第一志願），點擊 ℹ️ 可查看簡介</p>
 
             <div id="clubList" class="space-y-3 mb-6"></div>
 
-            <button onclick="submitData()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow transition text-lg">
-                提交 / 更新志願
+            <button onclick="submitData()" class="w-full btn-submit">
+                🍃 提交 / 更新志願
             </button>
         </div>
     </div>
 
     <!-- 彈出視窗 (社團簡介 Dialog) -->
     <div id="descModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-            <h3 id="modalTitle" class="text-xl font-bold text-slate-800 mb-3 border-b pb-2"></h3>
-            <p id="modalDesc" class="text-slate-600 text-sm leading-relaxed mb-6 whitespace-pre-line"></p>
-            <button onclick="closeModal()" class="w-full bg-slate-800 text-white font-bold py-2.5 rounded-xl hover:bg-slate-700 transition">
+        <div class="modal-card max-w-md w-full p-6 shadow-2xl">
+            <h3 id="modalTitle" class="font-display text-xl font-bold mb-3 border-b pb-2" style="border-color:var(--line)"></h3>
+            <p id="modalDesc" class="text-sm leading-relaxed mb-6 whitespace-pre-line" style="color:var(--ink-soft)"></p>
+            <button onclick="closeModal()" class="w-full btn-close py-2.5 rounded-xl transition">
                 了解，關閉視窗
             </button>
         </div>
@@ -92,19 +295,35 @@
             }
         };
 
+        function setTrail(step) {
+            // step: 1 = 選班級, 2 = 選同學, 3 = 排志願
+            const dots = { 1: 'dotClass', 2: 'dotStudent', 3: 'dotClub' };
+            const labels = { 1: 'labelClass', 2: 'labelStudent', 3: 'labelClub' };
+            [1, 2, 3].forEach(i => {
+                const dot = document.getElementById(dots[i]);
+                const label = document.getElementById(labels[i]);
+                dot.classList.remove('active', 'done');
+                label.classList.remove('active');
+                if (i < step) dot.classList.add('done');
+                else if (i === step) { dot.classList.add('active'); label.classList.add('active'); }
+            });
+            document.getElementById('lineOne').classList.toggle('done', step > 1);
+            document.getElementById('lineTwo').classList.toggle('done', step > 2);
+        }
+
         function renderClasses() {
             const classGrid = document.getElementById('classGrid');
             const classes = [...new Set(allStudents.map(s => s.className))];
-            
+
             classGrid.innerHTML = '';
             if(classes.length === 0) {
-                classGrid.innerHTML = '<p class="col-span-2 text-center text-slate-400 py-4">讀取中或尚未有學生資料...</p>';
+                classGrid.innerHTML = '<p class="col-span-2 text-center py-4" style="color:var(--ink-soft)">讀取中或尚未有學生資料...</p>';
                 return;
             }
 
             classes.forEach(c => {
                 const btn = document.createElement('button');
-                btn.className = "class-btn py-5 rounded-2xl text-2xl font-bold shadow-md transition active:scale-95";
+                btn.className = "class-btn active:scale-95";
                 btn.innerText = c;
                 btn.onclick = () => selectClass(c);
                 classGrid.appendChild(btn);
@@ -115,6 +334,7 @@
             document.getElementById('stepClass').classList.add('hidden');
             document.getElementById('stepStudent').classList.remove('hidden');
             document.getElementById('selectedClassTitle').innerText = `${c} 班學生名單`;
+            setTrail(2);
             renderStudents(c);
         }
 
@@ -125,11 +345,11 @@
             studentGrid.innerHTML = '';
             students.forEach(s => {
                 const card = document.createElement('div');
-                card.className = "bg-orange-50/50 border-2 border-orange-100 p-4 rounded-2xl text-center shadow-sm cursor-pointer hover:border-orange-300 active:scale-95 transition";
+                card.className = "student-card";
                 card.onclick = () => selectStudent(s);
                 card.innerHTML = `
-                    <div class="text-slate-400 font-semibold text-lg mb-1">${s.seatNumber}號</div>
-                    <div class="text-slate-800 font-bold text-2xl">${s.name}</div>
+                    <div class="seat-badge">${s.seatNumber}</div>
+                    <div class="student-name">${s.name}</div>
                 `;
                 studentGrid.appendChild(card);
             });
@@ -139,7 +359,8 @@
             currentStudent = student;
             document.getElementById('stepStudent').classList.add('hidden');
             document.getElementById('stepClub').classList.remove('hidden');
-            
+            setTrail(3);
+
             document.getElementById('studentInfo').innerText = `${student.className}班 ${student.seatNumber}號 ${student.name}`;
             document.getElementById('levelBadge').innerText = student.level;
 
@@ -168,8 +389,9 @@
 
             currentFilteredClubs.forEach((club) => {
                 const item = document.createElement('div');
-                item.className = "bg-white p-3 border border-slate-200 rounded-xl shadow-sm flex items-center justify-between gap-2";
-                
+                const rankClass = club.rank === 1 ? 'rank-1' : club.rank === 2 ? 'rank-2' : club.rank === 3 ? 'rank-3' : '';
+                item.className = `club-row ${rankClass}`;
+
                 const shortDesc = club.desc ? (club.desc.length > 12 ? club.desc.substring(0, 12) + "..." : club.desc) : "點擊查看詳情";
 
                 let optionsHtml = '';
@@ -180,15 +402,15 @@
 
                 item.innerHTML = `
                     <div class="flex items-center space-x-2 overflow-hidden flex-1">
-                        <select onchange="changeRank('${club.id}', this.value)" class="bg-blue-50 border border-blue-300 text-blue-900 font-bold text-sm rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                        <select onchange="changeRank('${club.id}', this.value)" class="rank-select">
                             ${optionsHtml}
                         </select>
                         <div class="truncate">
-                            <span class="font-bold text-slate-800 text-sm sm:text-base">[${club.id}] ${club.name}</span>
-                            <p class="text-xs text-slate-500 truncate">${shortDesc}</p>
+                            <span class="club-name text-sm sm:text-base">[${club.id}] ${club.name}</span>
+                            <p class="club-desc text-xs truncate">${shortDesc}</p>
                         </div>
                     </div>
-                    <button onclick="showModal('${club.name}', \`${club.desc}\`)" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold px-2.5 py-1.5 rounded-md transition flex-shrink-0">
+                    <button onclick="showModal('${club.name}', \`${club.desc}\`)" class="info-chip flex-shrink-0">
                         ℹ️ 簡介
                     </button>
                 `;
@@ -227,6 +449,7 @@
             document.getElementById('stepClub').classList.add('hidden');
             document.getElementById('stepStudent').classList.add('hidden');
             document.getElementById('stepClass').classList.remove('hidden');
+            setTrail(1);
             currentStudent = null;
         }
 
@@ -254,7 +477,7 @@
                     body: JSON.stringify(payload)
                 });
                 alert('志願提交/更新成功！已寫入資料庫。');
-                
+
                 const studentKey = `${currentStudent.className}_${currentStudent.seatNumber}`;
                 if (!existingRecords[studentKey]) existingRecords[studentKey] = {};
                 currentFilteredClubs.forEach(c => {
