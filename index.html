@@ -20,7 +20,7 @@
         *{ font-family: "Noto Sans TC", sans-serif; }
         body{ background-color: var(--bg-color); color: var(--text-main); }
 
-        /* Banner 淺色背景，對比深色 Logo */
+        /* Banner 淺色背景，凸顯綠色 Logo */
         .banner-header {
             background: linear-gradient(135deg, #F0F4EC 0%, #E2EAD8 100%);
             border: 2px solid #C2D1B7;
@@ -31,7 +31,7 @@
             box-shadow: 0 4px 15px rgba(61,83,43,0.08);
         }
 
-        /* 步驟列 */
+        /* 橫向步驟條 */
         .trail-container {
             display: flex; flex-direction: row; align-items: center; justify-content: center;
             gap: 12px; margin: 24px 0;
@@ -193,8 +193,8 @@
     </div>
 
     <script>
-        // ⚠️ 請替換為您的 Google Apps Script Web App 網址
-        const GAS_URL = "https://script.google.com/macros/s/YOUR_GAS_DEPLOYMENT_ID/exec";
+        // 帶入您指定的網址：
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwysSOartamBcSLu63YM0ZDVBHF9SU4ZhjA3yCYXK302LTvAtgRLqh4xEiP0yhHcxZxHg/exec";
 
         let allStudents = [];
         let allClubs = [];
@@ -207,11 +207,6 @@
         async function loadData() {
             const classGrid = document.getElementById('classGrid');
             classGrid.innerHTML = '<div class="status-box col-span-2">📡 資料載入中，請稍候…</div>';
-
-            if (!GAS_URL || GAS_URL.includes("YOUR_GAS_DEPLOYMENT_ID")) {
-                classGrid.innerHTML = '<div class="status-box error col-span-2">尚未設定有效的 API 網址（GAS_URL）</div>';
-                return;
-            }
 
             try {
                 const res = await fetch(GAS_URL);
