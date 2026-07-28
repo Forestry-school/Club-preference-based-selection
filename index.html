@@ -1,361 +1,547 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>福瑞斯特中小學 - 線上選社志願序</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { background-color: #f4f6f0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    .card-shadow { box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08); }
-    /* 卡片左側志願彩條 */
-    .border-rank-1 { border-left: 6px solid #f97316 !important; }
-    .border-rank-2 { border-left: 6px solid #15803d !important; }
-    .border-rank-3 { border-left: 6px solid #0284c7 !important; }
-    .border-rank-default { border-left: 6px solid #a8a29e !important; }
-  </style>
-</head>
-<body class="p-3 sm:p-6 min-h-screen flex flex-col items-center justify-center">
-
-  <div class="w-full max-w-lg bg-white rounded-3xl p-4 sm:p-6 card-shadow border border-gray-100 my-auto">
-    
-    <!-- 頂部 Header：還原原本綠底與校徽質感 -->
-    <div class="bg-[#eaf0e6] rounded-2xl p-4 sm:p-5 text-center mb-6 border border-[#d3e0ce]">
-      <div class="flex items-center justify-center gap-2 mb-1">
-        <span class="text-2xl">🌲</span>
-        <h1 class="text-xl sm:text-2xl font-black text-[#0f4c28] tracking-wide">福瑞斯特中小學</h1>
-      </div>
-      <p class="text-[11px] font-bold text-[#2d6a4f] tracking-wider mb-2">Forestry Elementary and Junior High School</p>
-      <div class="text-lg sm:text-xl font-black text-[#1b4332]">115學年度 第一學期</div>
-      <div class="text-xs sm:text-sm font-bold text-[#2d6a4f] mt-0.5">線上選社志願序</div>
-
-      <!-- 倒數計時器：還原深灰底金字 -->
-      <div id="timer-box" class="mt-3 bg-[#2b2b2b] text-white rounded-2xl py-2 px-3 shadow-sm">
-        <div id="timer-title" class="text-xs text-[#f59e0b] font-bold mb-0.5">⏰ 報名時間計算中...</div>
-        <div id="timer-count" class="text-sm sm:text-base font-mono font-bold tracking-wider">--天 --時 --分 --秒</div>
-      </div>
-    </div>
-
-    <!-- 步驟進度條 -->
-    <div class="flex items-center justify-around mb-6 px-6">
-      <div id="step1-badge" class="flex flex-col items-center">
-        <div class="w-8 h-8 rounded-full bg-[#2d6a4f] text-white font-bold flex items-center justify-center text-sm shadow">1</div>
-        <span class="text-xs font-bold text-[#1b4332] mt-1">選班級</span>
-      </div>
-      <div class="h-0.5 w-12 bg-gray-200"></div>
-      <div id="step2-badge" class="flex flex-col items-center">
-        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-400 font-bold flex items-center justify-center text-sm">2</div>
-        <span class="text-xs font-bold text-gray-400 mt-1">選同學</span>
-      </div>
-      <div class="h-0.5 w-12 bg-gray-200"></div>
-      <div id="step3-badge" class="flex flex-col items-center">
-        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-400 font-bold flex items-center justify-center text-sm">3</div>
-        <span class="text-xs font-bold text-gray-400 mt-1">排志願</span>
-      </div>
-    </div>
-
-    <!-- 載入中動畫 -->
-    <div id="loading" class="text-center py-10 border-2 border-dashed border-gray-200 rounded-2xl my-4">
-      <div class="inline-block animate-spin text-xl mb-2">🐚</div>
-      <p class="text-sm font-bold text-gray-500">資料載入中，請稍候⋯</p>
-    </div>
-
-    <!-- 動態內容區 -->
-    <div id="content" class="hidden"></div>
-
-    <div class="text-center mt-6 text-xs text-gray-400 font-medium">
-      製作人：TATA
-    </div>
-  </div>
-
-  <!-- 彈窗Modal：簡介說明 -->
-  <div id="modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative border border-amber-100">
-      <h3 id="modal-title" class="text-base font-bold text-gray-900 border-b pb-2"></h3>
-      <p id="modal-body" class="text-xs text-gray-600 my-4 leading-relaxed whitespace-pre-line max-h-60 overflow-y-auto"></p>
-      <button onclick="closeModal()" class="w-full bg-[#d97706] text-white font-bold py-2.5 rounded-xl hover:bg-[#b45309] transition text-sm">關閉簡介</button>
-    </div>
-  </div>
-
-<script>
-  // 🌟 已嵌入您的 Apps Script Web App 部署網址
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwysSOartamBcSLu63YM0ZDVBHF9SU4ZhjA3yCYXK302LTvAtgRLqh4xEiP0yhHcxZxHg/exec";
-
-  let appData = null;
-  let selectedClass = "";
-  let currentStudent = null;
-  let userPreferences = {}; 
-
-  window.onload = async () => {
-    try {
-      const res = await fetch(GAS_URL);
-      appData = await res.json();
-      document.getElementById('loading').classList.add('hidden');
-      document.getElementById('content').classList.remove('hidden');
-      startTimer();
-      renderStep1();
-    } catch (err) {
-      alert("資料載入失敗，請確認網路或連結設定！");
-    }
-  };
-
-  function startTimer() {
-    const update = () => {
-      const now = new Date().getTime();
-      const start = new Date(appData.startTime).getTime();
-      const end = new Date(appData.endTime).getTime();
-
-      if (isNaN(start) || isNaN(end)) {
-        document.getElementById('timer-title').innerText = '📢 報名狀態';
-        document.getElementById('timer-count').innerText = '開放中';
-        return;
-      }
-
-      if (now < start) {
-        document.getElementById('timer-title').innerText = '⏳ 距離報名開放';
-        calcTime(start - now);
-      } else if (now >= start && now <= end) {
-        document.getElementById('timer-title').innerText = '🔥 距離報名截止';
-        calcTime(end - now);
-      } else {
-        document.getElementById('timer-title').innerText = '🚫 報名已截止';
-        document.getElementById('timer-count').innerText = '00天 00時 00分 00秒';
-      }
-    };
-    update();
-    setInterval(update, 1000);
-  }
-
-  function calcTime(diff) {
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const s = Math.floor((diff % (1000 * 60)) / 1000);
-    document.getElementById('timer-count').innerText = `${d}天 ${h}時 ${m}分 ${s}秒`;
-  }
-
-  // Step 1: 選班級
-  function renderStep1() {
-    updateSteps(1);
-    const classes = [...new Set(appData.students.map(s => s.className))].sort();
-    
-    let html = `<h2 class="text-sm font-bold text-center text-gray-700 mb-4">請選擇班級</h2>`;
-    html += `<div class="grid grid-cols-3 gap-3">`;
-    classes.forEach(c => {
-      html += `<button onclick="selectClass('${c}')" class="py-3 bg-white hover:bg-stone-50 border border-gray-200 shadow-sm font-black text-gray-800 rounded-2xl transition text-sm">${c}</button>`;
-    });
-    html += `</div>`;
-    document.getElementById('content').innerHTML = html;
-  }
-
-  function selectClass(c) {
-    selectedClass = c;
-    renderStep2();
-  }
-
-  // Step 2: 選同學
-  function renderStep2() {
-    updateSteps(2);
-    const students = appData.students.filter(s => s.className === selectedClass);
-
-    let html = `<div class="flex items-center justify-between mb-4">
-                  <button onclick="renderStep1()" class="text-xs text-gray-500 hover:underline">← 返回選班級</button>
-                  <h2 class="text-sm font-bold text-gray-700">${selectedClass} - 請選擇姓名</h2>
-                </div>`;
-    html += `<div class="grid grid-cols-2 gap-2.5 max-h-80 overflow-y-auto p-1">`;
-    students.forEach(s => {
-      html += `<button onclick="selectStudent('${s.seatNumber}')" class="p-3 bg-white border border-gray-200 hover:border-amber-500 rounded-2xl text-left transition flex items-center justify-between shadow-sm">
-                <span class="font-bold text-gray-800 text-sm">${s.seatNumber}號 ${s.name}</span>
-                ${s.fixedClub ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-1 py-0.5 rounded font-bold">校隊</span>' : ''}
-               </button>`;
-    });
-    html += `</div>`;
-    document.getElementById('content').innerHTML = html;
-  }
-
-  function selectStudent(seat) {
-    currentStudent = appData.students.find(s => s.className === selectedClass && s.seatNumber === seat);
-    userPreferences = {};
-    const key = `${currentStudent.className}_${currentStudent.seatNumber}`;
-    if (appData.existingRecords && appData.existingRecords[key]) {
-      userPreferences = { ...appData.existingRecords[key] };
-    }
-    renderStep3();
-  }
-
-  // Step 3: 排志願 (已防止手機版文字裁切)
-  function renderStep3() {
-    updateSteps(3);
-
-    if (currentStudent.fixedClub) {
-      document.getElementById('content').innerHTML = `
-        <div class="text-center py-6">
-          <div class="text-3xl mb-2">🏀</div>
-          <h3 class="text-base font-bold text-gray-800 mb-1">${currentStudent.name} 同學你好！</h3>
-          <p class="text-xs text-gray-600 mb-4">你已具備指定校隊身份：<br><span class="text-amber-700 font-black text-sm">[${currentStudent.fixedClub}]</span></p>
-          <div class="p-3 bg-amber-50 rounded-xl text-amber-800 text-xs font-bold border border-amber-200">
-            系統已自動幫你完成登記，無須額外填寫志願。
-          </div>
-          <button onclick="renderStep1()" class="mt-6 text-xs text-gray-500 hover:underline">← 返回首頁</button>
-        </div>
-      `;
-      return;
-    }
-
-    const availableClubs = appData.clubs.filter(c => c.target.includes(currentStudent.level) || c.target.includes("全"));
-
-    let html = `
-      <div class="flex items-center justify-between mb-3">
-        <button onclick="renderStep2()" class="text-xs text-gray-500 hover:underline">← 重選同學</button>
-        <span class="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-1 rounded-lg border border-amber-200">${currentStudent.className} ${currentStudent.name}</span>
-      </div>
-      <p class="text-[11px] text-gray-400 text-center mb-3">ℹ️ 可點選右側「簡介」查看說明</p>
-      
-      <div class="space-y-2.5 max-h-[50vh] overflow-y-auto pr-1">
-    `;
-
-    availableClubs.forEach(club => {
-      const currentRank = userPreferences[club.name] || "";
-      let borderClass = "border-rank-default";
-      if (currentRank == 1) borderClass = "border-rank-1";
-      else if (currentRank == 2) borderClass = "border-rank-2";
-      else if (currentRank == 3) borderClass = "border-rank-3";
-
-      html += `
-        <div class="bg-white rounded-2xl p-3 border border-gray-100 shadow-sm ${borderClass}">
-          <div class="flex items-center justify-between gap-2">
-            
-            <!-- 志願選擇區 -->
-            <div class="shrink-0">
-              <select onchange="updateRank('${club.name}', this.value)" 
-                      class="bg-amber-50 border-2 border-amber-500 text-amber-900 text-xs font-bold rounded-xl px-2 py-1.5 focus:outline-none">
-                <option value="">選擇志願</option>
-                ${[1,2,3,4,5,6,7,8,9,10].map(r => `<option value="${r}" ${currentRank == r ? 'selected' : ''}>第 ${r} 志願</option>`).join('')}
-              </select>
-            </div>
-
-            <!-- 社團名稱（破字自動換行防裁切） -->
-            <div class="min-w-0 flex-1 px-1">
-              <div class="font-bold text-gray-800 text-xs sm:text-sm leading-tight break-words">
-                [${club.id}] ${club.name}
-              </div>
-              <div class="text-[10px] text-gray-400 truncate mt-0.5">
-                指導老師：${club.teacher || '待定'}
-              </div>
-            </div>
-
-            <!-- 簡介按鈕 -->
-            <div class="shrink-0">
-              <button onclick="showClubModal('${club.id}')" 
-                      class="bg-[#d97706] hover:bg-[#b45309] text-white font-bold text-[11px] py-1 px-2.5 rounded-lg shadow-sm flex items-center gap-0.5">
-                <span>ℹ️</span><span>簡介</span>
-              </button>
-            </div>
-
-          </div>
-        </div>
-      `;
-    });
-
-    html += `
-      </div>
-      <button onclick="submitPreferences()" class="w-full mt-4 bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-bold py-3 rounded-2xl shadow-md transition text-xs tracking-wider">
-        🚀 送出志願序結果
-      </button>
-    `;
-
-    document.getElementById('content').innerHTML = html;
-  }
-
-  function updateRank(clubName, rank) {
-    if (rank === "") {
-      delete userPreferences[clubName];
-    } else {
-      for (let k in userPreferences) {
-        if (userPreferences[k] == rank && k !== clubName) {
-          alert(`「第 ${rank} 志願」已選擇過囉！請勿重複選擇。`);
-          renderStep3();
-          return;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>115學年度 第一學期 線上選社志願序</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --primary: #4B6339;
+            --primary-dark: #374B28;
+            --bg-color: #F4F6F0;
+            --accent: #D98E2B;
+            --text-main: #2C3527;
+            --text-sub: #6C7A63;
         }
-      }
-      userPreferences[clubName] = rank;
-    }
-    renderStep3();
-  }
+        *{ font-family: "Noto Sans TC", sans-serif; }
+        body{ background-color: var(--bg-color); color: var(--text-main); }
 
-  async function submitPreferences() {
-    const preferencesArray = Object.keys(userPreferences).map(k => ({
-      clubName: k,
-      rank: parseInt(userPreferences[k])
-    }));
+        .banner-header {
+            background: #EAF0E6;
+            border: 1.5px solid #D3E0CE;
+            border-radius: 20px;
+            color: var(--text-main);
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(61,83,43,0.05);
+        }
 
-    if (preferencesArray.length === 0) {
-      alert("請至少選擇一個志願！");
-      return;
-    }
+        .countdown-card {
+            background: #2B2B2B;
+            color: #FFF;
+            border-radius: 16px;
+            padding: 10px 16px;
+            text-align: center;
+            margin-top: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
 
-    const payload = {
-      className: currentStudent.className,
-      seatNumber: currentStudent.seatNumber,
-      studentName: currentStudent.name,
-      level: currentStudent.level,
-      fixedClub: currentStudent.fixedClub || "",
-      preferences: preferencesArray
-    };
+        .trail-container {
+            display: flex; flex-direction: row; align-items: center; justify-content: center;
+            gap: 12px; margin: 20px 0;
+        }
+        .trail-step { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .trail-dot {
+            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 14px; border: 2px solid #C2D1B7; background: #FFF; color: var(--text-sub); font-weight: 700; transition: .2s ease;
+        }
+        .trail-dot.active { background: var(--primary); border-color: var(--primary); color: #FFF; }
+        .trail-dot.done { background: #8CA07B; border-color: #8CA07B; color: #FFF; }
+        .trail-label { font-size: 13px; color: var(--text-sub); font-weight: 700; }
+        .trail-label.active { color: var(--primary); }
+        .trail-line { flex: 1; max-width: 48px; height: 3px; background: #C2D1B7; border-radius: 2px; margin-bottom: 20px; }
+        .trail-line.done { background: #8CA07B; }
 
-    document.getElementById('loading').classList.remove('hidden');
-    document.getElementById('content').classList.add('hidden');
+        .class-btn {
+            background: var(--primary); color: white; border-radius: 16px;
+            padding: 22px 10px; font-size: 1.4rem; font-weight: 800;
+            box-shadow: 0 4px 12px rgba(75,99,57,0.2); transition: .15s ease;
+        }
+        .class-btn:hover { background: var(--primary-dark); }
+        .class-btn:active { transform: scale(0.97); }
 
-    try {
-      const res = await fetch(GAS_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-      const result = await res.json();
+        .student-card {
+            background: #FBF9F1; border: 2px solid #E5DEC9;
+            border-radius: 16px; padding: 18px 10px; text-align: center;
+            cursor: pointer; transition: .15s ease;
+        }
+        .student-card:hover { border-color: var(--primary); background: #FFF; }
+        .student-card:active { transform: scale(0.97); }
 
-      if (result.status === "success") {
-        alert("🎉 志願提交成功！");
-        location.reload();
-      } else {
-        alert("提交失敗：" + result.message);
-        document.getElementById('loading').classList.add('hidden');
-        document.getElementById('content').classList.remove('hidden');
-      }
-    } catch (e) {
-      alert("提交失敗，請檢查網路！");
-      document.getElementById('loading').classList.add('hidden');
-      document.getElementById('content').classList.remove('hidden');
-    }
-  }
+        .club-row {
+            background: #FFF; border: 1.5px solid #E2E8DC; border-left: 6px solid #D1DBC8;
+            border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        }
+        .club-row.rank-1 { border-left-color: #D98E2B; }
+        .club-row.rank-2 { border-left-color: #4B6339; }
+        .club-row.rank-3 { border-left-color: #5B82A6; }
 
-  function updateSteps(step) {
-    [1, 2, 3].forEach(s => {
-      const b = document.getElementById(`step${s}-badge`);
-      const circle = b.children[0];
-      const text = b.children[1];
+        .rank-select {
+            background: #FFF; border: 1.5px solid var(--accent); color: #A8631C;
+            font-weight: 800; font-size: 14px; border-radius: 10px; padding: 6px 8px;
+        }
+        .info-chip {
+            background: var(--accent); color: #FFF; font-weight: 700; font-size: 12px;
+            padding: 6px 12px; border-radius: 8px; transition: .2s;
+        }
+        .info-chip:hover { background: #B3711E; }
 
-      if (s <= step) {
-        circle.className = "w-8 h-8 rounded-full bg-[#2d6a4f] text-white font-bold flex items-center justify-center text-sm shadow";
-        text.className = "text-xs font-bold text-[#1b4332] mt-1";
-      } else {
-        circle.className = "w-8 h-8 rounded-full bg-gray-200 text-gray-400 font-bold flex items-center justify-center text-sm";
-        text.className = "text-xs font-bold text-gray-400 mt-1";
-      }
-    });
-  }
+        .btn-submit {
+            background: var(--primary); color: white; font-weight: 900; font-size: 1.1rem;
+            padding: 16px; border-radius: 16px; box-shadow: 0 4px 14px rgba(75,99,57,0.25);
+        }
+        .btn-submit:hover { background: var(--primary-dark); }
+        .btn-submit:disabled { background: #94A3B8; box-shadow: none; cursor: not-allowed; }
 
-  function showClubModal(clubId) {
-    const club = appData.clubs.find(c => c.id === clubId);
-    if (!club) return;
-    document.getElementById('modal-title').innerText = `[${club.id}] ${club.name}`;
-    document.getElementById('modal-body').innerText = club.desc || "暫無簡介說明。";
-    document.getElementById('modal').classList.remove('hidden');
-  }
+        .status-box { border: 2px dashed #C2D1B7; border-radius: 14px; padding: 24px; text-align: center; color: var(--text-sub); }
+        .status-box.error { border-color: #E2A082; background: #FDF4F0; color: #B04A22; }
 
-  function closeModal() {
-    document.getElementById('modal').classList.add('hidden');
-  }
-</script>
+        .fixed-club-card {
+            background: #FEF8EC; border: 2px solid #E6A13B;
+            border-radius: 16px; padding: 24px 16px; text-align: center;
+        }
+    </style>
+</head>
+<body class="py-6 px-4">
+    <div class="max-w-xl mx-auto bg-white rounded-3xl shadow-xl p-5 sm:p-7">
+        
+        <!-- 頂部 Banner（還原圖像與校名） -->
+        <div class="banner-header">
+            <div class="flex items-center justify-center gap-2 mb-1">
+                <img id="schoolLogo" src="logo.png" alt="學校Logo" class="h-8 object-contain" onerror="this.outerHTML='<span class=\'text-2xl\'>🌲</span>'">
+                <h1 class="text-xl sm:text-2xl font-black text-[#0f4c28] tracking-wide">福瑞斯特中小學</h1>
+            </div>
+            <p class="text-[11px] font-bold text-[#2d6a4f] tracking-wider mb-2">Forestry Elementary and Junior High School</p>
+            <div class="text-lg sm:text-xl font-black text-[#1b4332]">115學年度 第一學期</div>
+            <div class="text-xs sm:text-sm font-bold text-[#2d6a4f] mt-0.5">線上選社志願序</div>
 
+            <!-- 時間與倒數計時卡片 -->
+            <div class="countdown-card">
+                <div id="timeStatusText" class="text-xs font-bold text-[#f59e0b] mb-0.5">⏰ 報名時間計算中...</div>
+                <div id="countdownTimer" class="text-sm sm:text-base font-mono font-bold tracking-wider text-white">--天 --時 --分 --秒</div>
+            </div>
+        </div>
+
+        <!-- 橫向步驟列 -->
+        <div class="trail-container" id="trail">
+            <div class="trail-step">
+                <div class="trail-dot active" id="dotClass">1</div>
+                <span class="trail-label active" id="labelClass">選班級</span>
+            </div>
+            <div class="trail-line" id="lineOne"></div>
+            <div class="trail-step">
+                <div class="trail-dot" id="dotStudent">2</div>
+                <span class="trail-label" id="labelStudent">選同學</span>
+            </div>
+            <div class="trail-line" id="lineTwo"></div>
+            <div class="trail-step">
+                <div class="trail-dot" id="dotClub">3</div>
+                <span class="trail-label" id="labelClub">排志願</span>
+            </div>
+        </div>
+
+        <!-- 步驟 1：選擇班級 -->
+        <div id="stepClass">
+            <h3 class="font-black text-center text-base mb-4 text-slate-700">請選擇班級</h3>
+            <div id="classGrid" class="grid grid-cols-2 gap-4">
+                <div class="status-box col-span-2">📡 資料載入中，請稍候…</div>
+            </div>
+        </div>
+
+        <!-- 步驟 2：選擇學生卡片 -->
+        <div id="stepStudent" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="backToClassStep()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-3 py-1.5 rounded-lg border border-slate-300 transition flex items-center gap-1">
+                    ⬅️ 上一步 (選班級)
+                </button>
+                <h3 id="selectedClassTitle" class="font-black text-base text-slate-700"></h3>
+                <div class="w-12"></div>
+            </div>
+            <div id="studentGrid" class="grid grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- 步驟 3：社團選擇區 -->
+        <div id="stepClub" class="hidden">
+            <div class="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 mb-4">
+                <div class="flex justify-between items-center mb-1">
+                    <span id="studentInfo" class="font-bold text-lg text-emerald-950"></span>
+                    <button onclick="restartProcess()" class="text-xs bg-white border border-emerald-200 text-emerald-800 font-bold px-3 py-1 rounded-lg hover:bg-emerald-100 transition">重新選擇</button>
+                </div>
+                <span id="levelBadge" class="inline-block bg-emerald-700 text-white font-bold text-xs px-3 py-0.5 rounded-full"></span>
+            </div>
+
+            <!-- 校隊鎖定區 -->
+            <div id="fixedClubNotice" class="hidden mb-6">
+                <div class="fixed-club-card">
+                    <div class="text-4xl mb-2">🏆</div>
+                    <h4 class="font-black text-amber-900 text-lg mb-1">您已由學校指定為校隊成員</h4>
+                    <p class="text-amber-800 font-black text-2xl my-3" id="fixedClubName"></p>
+                    <p class="text-xs text-amber-700 mt-2 mb-4">📌 校隊成員免填其他志願，請點擊下方按鈕確認送出紀錄。</p>
+                    <button id="fixedSubmitBtn" onclick="submitData()" class="w-full btn-submit bg-amber-600 hover:bg-amber-700 text-white">
+                        確認校隊名額並送出
+                    </button>
+                </div>
+            </div>
+
+            <!-- 一般學生填寫區 -->
+            <div id="normalClubArea">
+                <p class="text-xs text-slate-500 mb-3 text-center">💡 請為每個社團選擇志願序號（數字 1 為第一志願），點擊 ℹ️ 可查看簡介</p>
+                <div id="clubList" class="space-y-3 mb-6"></div>
+                <button id="submitBtn" onclick="submitData()" class="w-full btn-submit">
+                    提交 / 更新志願
+                </button>
+            </div>
+        </div>
+
+        <footer class="text-center text-slate-400 text-xs mt-8 font-medium">製作人：TATA</footer>
+    </div>
+
+    <!-- 簡介彈出視窗 -->
+    <div id="descModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <h3 id="modalTitle" class="text-xl font-bold mb-1 text-slate-800"></h3>
+            <div id="modalTeacher" class="text-xs font-bold text-emerald-700 mb-3"></div>
+            <p id="modalDesc" class="text-sm leading-relaxed mb-6 text-slate-600 whitespace-pre-line"></p>
+            <button onclick="closeModal()" class="w-full bg-emerald-800 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-900 transition">
+                了解，關閉視窗
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwysSOartamBcSLu63YM0ZDVBHF9SU4ZhjA3yCYXK302LTvAtgRLqh4xEiP0yhHcxZxHg/exec";
+
+        let allStudents = [];
+        let allClubs = [];
+        let existingRecords = {};
+        let currentStudent = null;
+        let currentFilteredClubs = [];
+
+        let startTime = null;
+        let endTime = null;
+        let isSystemOpen = false;
+        let timerInterval = null;
+
+        window.onload = () => { loadData(); };
+
+        async function loadData() {
+            const classGrid = document.getElementById('classGrid');
+            classGrid.innerHTML = '<div class="status-box col-span-2">📡 資料載入中，請稍候…</div>';
+
+            try {
+                const res = await fetch(GAS_URL, { redirect: 'follow' });
+                if (!res.ok) throw new Error('伺服器回應錯誤（狀態碼 ' + res.status + '）');
+
+                let data = await res.json();
+                allStudents = data.students || [];
+                allClubs = data.clubs || [];
+                existingRecords = data.existingRecords || {};
+
+                if (data.startTime) startTime = new Date(data.startTime.replace(/-/g, "/"));
+                if (data.endTime) endTime = new Date(data.endTime.replace(/-/g, "/"));
+
+                // 啟動倒數計時器
+                startTimer();
+
+                if (allStudents.length === 0) {
+                    classGrid.innerHTML = '<div class="status-box col-span-2">目前查無學生名單<br><button class="mt-2 text-xs bg-emerald-700 text-white px-3 py-1 rounded" onclick="loadData()">重新載入</button></div>';
+                    return;
+                }
+
+                renderClasses();
+            } catch (e) {
+                console.error(e);
+                classGrid.innerHTML = '<div class="status-box error col-span-2">⚠️ 資料載入失敗<br>請檢查 GAS 部署權限或網路連線<br><button class="mt-2 text-xs bg-red-600 text-white px-3 py-1 rounded" onclick="loadData()">重新載入</button></div>';
+            }
+        }
+
+        // ⏱️ 倒數計時與時間控制機制
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            function update() {
+                const now = new Date();
+                const statusText = document.getElementById('timeStatusText');
+                const countdownTimer = document.getElementById('countdownTimer');
+                const submitBtn = document.getElementById('submitBtn');
+                const fixedSubmitBtn = document.getElementById('fixedSubmitBtn');
+
+                // 未設定時間時預設開啟
+                if (!startTime && !endTime) {
+                    statusText.innerText = "📢 報名狀態";
+                    countdownTimer.innerText = "開放中";
+                    isSystemOpen = true;
+                    if(submitBtn) submitBtn.disabled = false;
+                    if(fixedSubmitBtn) fixedSubmitBtn.disabled = false;
+                    return;
+                }
+
+                if (startTime && now < startTime) {
+                    isSystemOpen = false;
+                    statusText.innerText = "⏳ 距離報名開放";
+                    countdownTimer.innerText = formatDiff(startTime - now);
+                    if(submitBtn) { submitBtn.disabled = true; submitBtn.innerText = "尚未開放填寫"; }
+                    if(fixedSubmitBtn) { fixedSubmitBtn.disabled = true; fixedSubmitBtn.innerText = "尚未開放填寫"; }
+                } 
+                else if (endTime && now > endTime) {
+                    isSystemOpen = false;
+                    statusText.innerText = "🚫 報名已截止";
+                    countdownTimer.innerText = "00天 00時 00分 00秒";
+                    if(submitBtn) { submitBtn.disabled = true; submitBtn.innerText = "報名已截止"; }
+                    if(fixedSubmitBtn) { fixedSubmitBtn.disabled = true; fixedSubmitBtn.innerText = "報名已截止"; }
+                } 
+                else {
+                    isSystemOpen = true;
+                    statusText.innerText = "🔥 距離報名截止";
+                    countdownTimer.innerText = formatDiff(endTime - now);
+                    if(submitBtn) { submitBtn.disabled = false; submitBtn.innerText = "提交 / 更新志願"; }
+                    if(fixedSubmitBtn) { fixedSubmitBtn.disabled = false; fixedSubmitBtn.innerText = "確認校隊名額並送出"; }
+                }
+            }
+
+            update();
+            timerInterval = setInterval(update, 1000);
+        }
+
+        function formatDiff(ms) {
+            if (ms <= 0) return "00天 00時 00分 00秒";
+            const sec = Math.floor(ms / 1000) % 60;
+            const min = Math.floor(ms / (1000 * 60)) % 60;
+            const hr = Math.floor(ms / (1000 * 60 * 60)) % 24;
+            const day = Math.floor(ms / (1000 * 60 * 60 * 24));
+            
+            const p = (n) => String(n).padStart(2, '0');
+            return `${day}天 ${p(hr)}時 ${p(min)}分 ${p(sec)}秒`;
+        }
+
+        function setTrail(step) {
+            const dots = { 1: 'dotClass', 2: 'dotStudent', 3: 'dotClub' };
+            const labels = { 1: 'labelClass', 2: 'labelStudent', 3: 'labelClub' };
+            [1, 2, 3].forEach(i => {
+                const dot = document.getElementById(dots[i]);
+                const label = document.getElementById(labels[i]);
+                dot.classList.remove('active', 'done');
+                label.classList.remove('active');
+                if (i < step) dot.classList.add('done');
+                else if (i === step) { dot.classList.add('active'); label.classList.add('active'); }
+            });
+            document.getElementById('lineOne').classList.toggle('done', step > 1);
+            document.getElementById('lineTwo').classList.toggle('done', step > 2);
+        }
+
+        function renderClasses() {
+            const classGrid = document.getElementById('classGrid');
+            const classes = [...new Set(allStudents.map(s => s.className))];
+
+            classGrid.innerHTML = '';
+            if (classes.length === 0) {
+                classGrid.innerHTML = '<div class="status-box col-span-2">目前查無班級資料</div>';
+                return;
+            }
+
+            classes.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = "class-btn active:scale-95";
+                btn.innerText = c;
+                btn.onclick = () => selectClass(c);
+                classGrid.appendChild(btn);
+            });
+        }
+
+        function selectClass(c) {
+            document.getElementById('stepClass').classList.add('hidden');
+            document.getElementById('stepStudent').classList.remove('hidden');
+            document.getElementById('selectedClassTitle').innerText = `${c} 班學生名單`;
+            setTrail(2);
+            renderStudents(c);
+        }
+
+        function backToClassStep() {
+            document.getElementById('stepStudent').classList.add('hidden');
+            document.getElementById('stepClass').classList.remove('hidden');
+            setTrail(1);
+        }
+
+        function renderStudents(c) {
+            const studentGrid = document.getElementById('studentGrid');
+            const students = allStudents.filter(s => s.className === c);
+
+            studentGrid.innerHTML = '';
+            if (students.length === 0) {
+                studentGrid.innerHTML = '<div class="status-box col-span-2">這個班級目前沒有學生資料</div>';
+                return;
+            }
+            students.forEach(s => {
+                const card = document.createElement('div');
+                card.className = "student-card";
+                card.onclick = () => selectStudent(s);
+                
+                const fixedBadge = s.fixedClub ? `<span class="inline-block bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded mt-1">校隊成員</span>` : '';
+                card.innerHTML = `
+                    <div class="text-slate-400 font-medium text-sm mb-0.5">${s.seatNumber}號</div>
+                    <div class="text-slate-800 font-bold text-2xl">${s.name}</div>
+                    ${fixedBadge}
+                `;
+                studentGrid.appendChild(card);
+            });
+        }
+
+        function selectStudent(student) {
+            currentStudent = student;
+            document.getElementById('stepStudent').classList.add('hidden');
+            document.getElementById('stepClub').classList.remove('hidden');
+            setTrail(3);
+
+            document.getElementById('studentInfo').innerText = `${student.className}班 ${student.seatNumber}號 ${student.name}`;
+            document.getElementById('levelBadge').innerText = student.level;
+
+            if (student.fixedClub && student.fixedClub.trim() !== "") {
+                document.getElementById('fixedClubNotice').classList.remove('hidden');
+                document.getElementById('normalClubArea').classList.add('hidden');
+                document.getElementById('fixedClubName').innerText = student.fixedClub;
+            } else {
+                document.getElementById('fixedClubNotice').classList.add('hidden');
+                document.getElementById('normalClubArea').classList.remove('hidden');
+
+                const studentGrade = student.className.charAt(0);
+                const studentKey = `${student.className}_${student.seatNumber}`;
+                const pastRecord = existingRecords[studentKey] || {};
+
+                const clubsForLevel = allClubs.filter(c => {
+                    const isLevelMatch = c.target === student.level;
+                    const isGradeMatch = !c.gradeLimit || c.gradeLimit === "" || c.gradeLimit === studentGrade;
+                    const isNotSchoolTeam = !c.name.includes("校隊");
+                    return isLevelMatch && isGradeMatch && isNotSchoolTeam;
+                });
+
+                currentFilteredClubs = clubsForLevel.map((club, idx) => {
+                    const savedRank = pastRecord[club.name] ? parseInt(pastRecord[club.name]) : (idx + 1);
+                    return { ...club, rank: savedRank };
+                });
+
+                renderClubs();
+            }
+        }
+
+        function renderClubs() {
+            const clubListEl = document.getElementById('clubList');
+            clubListEl.innerHTML = '';
+
+            if (currentFilteredClubs.length === 0) {
+                clubListEl.innerHTML = '<div class="status-box">這個年段目前查無一般社團資料</div>';
+                return;
+            }
+
+            const totalClubs = currentFilteredClubs.length;
+            currentFilteredClubs.sort((a, b) => a.rank - b.rank);
+
+            currentFilteredClubs.forEach((club) => {
+                const item = document.createElement('div');
+                const rankClass = club.rank === 1 ? 'rank-1' : club.rank === 2 ? 'rank-2' : club.rank === 3 ? 'rank-3' : '';
+                item.className = `club-row ${rankClass}`;
+
+                const teacherText = club.teacher ? `指導老師：${club.teacher}` : '';
+                const descText = club.desc ? club.desc : '點擊查看詳情';
+                const subText = teacherText ? `${teacherText} | ${descText}` : descText;
+
+                let optionsHtml = '';
+                for (let i = 1; i <= totalClubs; i++) {
+                    const selected = (i === club.rank) ? 'selected' : '';
+                    optionsHtml += `<option value="${i}" ${selected}>第 ${i} 志願</option>`;
+                }
+
+                item.innerHTML = `
+                    <div class="flex items-center space-x-2 overflow-hidden flex-1">
+                        <select onchange="changeRank('${club.id}', this.value)" class="rank-select" ${!isSystemOpen ? 'disabled' : ''}>
+                            ${optionsHtml}
+                        </select>
+                        <div class="truncate">
+                            <span class="font-bold text-slate-800 text-sm sm:text-base">[${club.id}] ${club.name}</span>
+                            <p class="text-xs text-slate-500 truncate">${subText}</p>
+                        </div>
+                    </div>
+                    <button onclick="showModal('${club.name}', '${club.teacher}', \`${club.desc}\`)" class="info-chip flex-shrink-0">
+                        ℹ️ 簡介
+                    </button>
+                `;
+                clubListEl.appendChild(item);
+            });
+        }
+
+        function changeRank(clubId, newRank) {
+            newRank = parseInt(newRank);
+            const targetClub = currentFilteredClubs.find(c => c.id === clubId);
+            const oldRank = targetClub.rank;
+
+            if (oldRank === newRank) return;
+
+            const replacedClub = currentFilteredClubs.find(c => c.rank === newRank);
+            if (replacedClub) {
+                replacedClub.rank = oldRank;
+            }
+            targetClub.rank = newRank;
+
+            renderClubs();
+        }
+
+        function showModal(title, teacher, desc) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalTeacher').innerText = teacher ? `指導老師：${teacher}` : '';
+            document.getElementById('modalDesc').innerText = desc || "暫無詳細簡介。";
+            document.getElementById('descModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('descModal').classList.add('hidden');
+        }
+
+        function restartProcess() {
+            document.getElementById('stepClub').classList.add('hidden');
+            document.getElementById('stepStudent').classList.add('hidden');
+            document.getElementById('stepClass').classList.remove('hidden');
+            setTrail(1);
+            currentStudent = null;
+        }
+
+        async function submitData() {
+            if (!isSystemOpen) {
+                alert('目前非開放選社時間，無法提交志願！');
+                return;
+            }
+
+            if (!currentStudent) return;
+
+            const isFixed = currentStudent.fixedClub && currentStudent.fixedClub.trim() !== "";
+
+            const payload = {
+                className: currentStudent.className,
+                seatNumber: currentStudent.seatNumber,
+                studentName: currentStudent.name,
+                level: currentStudent.level,
+                fixedClub: isFixed ? currentStudent.fixedClub : "",
+                preferences: isFixed ? [] : currentFilteredClubs.map(c => ({
+                    clubName: c.name,
+                    rank: c.rank
+                }))
+            };
+
+            try {
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                alert(isFixed ? '校隊名額已成功確認並寫入資料庫！' : '志願提交/更新成功！已寫入資料庫。');
+
+            } catch (e) {
+                alert('提交失敗：' + e);
+            }
+        }
+    </script>
 </body>
 </html>
