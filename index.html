@@ -197,6 +197,21 @@
         <footer class="text-center text-slate-400 text-xs mt-6 font-medium">製作人：TATA</footer>
     </div>
 
+    <!-- 密碼驗證彈出視窗 -->
+    <div id="passwordModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl max-w-xs w-full p-6 shadow-2xl text-center">
+            <h3 class="text-xl font-black mb-1 text-slate-800">身分驗證</h3>
+            <p id="passwordModalStudentName" class="text-emerald-700 font-bold mb-4 text-sm"></p>
+            <p class="text-xs text-slate-500 mb-3">請輸入4位數密碼 (生日)</p>
+            <input type="password" id="studentPasswordInput" maxlength="4" inputmode="numeric" class="w-full text-center text-3xl tracking-widest font-mono border-2 border-emerald-200 rounded-xl py-2 mb-2 focus:outline-none focus:border-emerald-500 transition" placeholder="••••">
+            <div id="passwordError" class="text-red-500 text-xs font-bold mb-3 h-4 invisible">密碼錯誤，請重新輸入！</div>
+            <div class="flex gap-2 mt-1">
+                <button onclick="closePasswordModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl hover:bg-slate-200 transition">取消</button>
+                <button onclick="verifyPassword()" class="flex-1 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700 transition">確認進入</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 簡介彈出視窗 -->
     <div id="descModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl">
@@ -210,12 +225,14 @@
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwysSOartamBcSLu63YM0ZDVBHF9SU4ZhjA3yCYXK302LTvAtgRLqh4xEiP0yhHcxZxHg/exec";
+        // ✅ 已更新為您的最新網址
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxdSvYxfzs18Mn5KX13GvkozT55NeXaP0AbXd6E0EVfFgWVNaEm8RwKg4saw_Z_cmVljQ/exec";
 
         let allStudents = [];
         let allClubs = [];
         let existingRecords = {};
         let currentStudent = null;
+        let pendingStudent = null;
         let currentFilteredClubs = [];
 
         let startTime = null;
@@ -225,12 +242,19 @@
 
         window.onload = () => { loadData(); };
 
+        document.getElementById('studentPasswordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyPassword();
+            }
+        });
+
         async function loadData() {
             const classGrid = document.getElementById('classGrid');
             classGrid.innerHTML = '<div class="status-box col-span-2">📡 資料載入中，請稍候…</div>';
 
             try {
-                const res = await fetch(GAS_URL, { redirect: 'follow' });
+                // 強制繞過瀏覽器快取，確保抓到最新帶有密碼的資料
+                const res = await fetch(GAS_URL + "?t=" + new Date().getTime(), { redirect: 'follow' });
                 if (!res.ok) throw new Error('伺服器回應錯誤（狀態碼 ' + res.status + '）');
 
                 let data = await res.json();
@@ -372,7 +396,8 @@
             students.forEach(s => {
                 const card = document.createElement('div');
                 card.className = "student-card";
-                card.onclick = () => selectStudent(s);
+                
+                card.onclick = () => promptPassword(s);
                 
                 const fixedBadge = s.fixedClub ? `<span class="inline-block bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded mt-1">校隊成員</span>` : '';
                 card.innerHTML = `
@@ -384,7 +409,55 @@
             });
         }
 
-        function selectStudent(student) {
+        function promptPassword(student) {
+            pendingStudent = student;
+            document.getElementById('passwordModalStudentName').innerText = `${student.className} 班 ${student.name}`;
+            document.getElementById('studentPasswordInput').value = '';
+            document.getElementById('passwordError').classList.add('invisible');
+            document.getElementById('passwordModal').classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('studentPasswordInput').focus();
+            }, 100);
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.add('hidden');
+            pendingStudent = null;
+        }
+
+        function verifyPassword() {
+            const inputVal = document.getElementById('studentPasswordInput').value.trim();
+            const errEl = document.getElementById('passwordError');
+
+            // 自動補零處理。避免試算表將 0904 轉成 904 導致比對失敗。
+            let expectedPwd = pendingStudent.password || "";
+            if (expectedPwd.length > 0 && expectedPwd.length < 4) {
+                expectedPwd = expectedPwd.padStart(4, '0');
+            }
+
+            console.log(`[驗證資訊] 學生: ${pendingStudent.name} | 網頁輸入: '${inputVal}' | 系統預期: '${expectedPwd}'`);
+
+            if (inputVal === expectedPwd) {
+                // ✅ 先將資料傳進下一頁，再關閉視窗，確保資料不會變為空值
+                enterClubSelection(pendingStudent);
+                closePasswordModal();
+            } else {
+                errEl.classList.remove('invisible');
+                
+                // 如果連系統預期都是空字串，代表還是沒抓到新版 API
+                if(expectedPwd === "") {
+                    errEl.innerText = "系統尚未抓取到密碼資料，請重新整理網頁！";
+                } else {
+                    errEl.innerText = "密碼錯誤，請重新輸入！";
+                }
+
+                document.getElementById('studentPasswordInput').value = '';
+                document.getElementById('studentPasswordInput').focus();
+            }
+        }
+
+        function enterClubSelection(student) {
             currentStudent = student;
             document.getElementById('stepStudent').classList.add('hidden');
             document.getElementById('stepClub').classList.remove('hidden');
@@ -421,7 +494,6 @@
             }
         }
 
-        /* 關鍵修正：將社團名稱與老師分成兩行顯示，提供最大顯示空間 */
         function renderClubs() {
             const clubListEl = document.getElementById('clubList');
             clubListEl.innerHTML = '';
@@ -523,6 +595,9 @@
             };
 
             try {
+                const btn = document.getElementById('submitBtn');
+                if(btn) { btn.disabled = true; btn.innerText = "資料傳送中..."; }
+
                 await fetch(GAS_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -532,8 +607,11 @@
 
                 alert(isFixed ? '校隊名額已成功確認並寫入資料庫！' : '志願提交/更新成功！已寫入資料庫。');
 
+                if(btn) { btn.disabled = false; btn.innerText = "提交 / 更新志願"; }
             } catch (e) {
                 alert('提交失敗：' + e);
+                const btn = document.getElementById('submitBtn');
+                if(btn) { btn.disabled = false; btn.innerText = "提交 / 更新志願"; }
             }
         }
     </script>
